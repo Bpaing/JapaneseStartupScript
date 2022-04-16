@@ -52,11 +52,13 @@ async def trackCBZ():
 
 #cmdline shows the path. can insert directly into CBZ().
 #cwd shows the directory the file is in.
+#By storing processes in a set, it is less computationally-intensive to monitor new processes.
 for process in psutil.process_iter():
     if process.name() == 'CDisplayEx.exe':
         # cmdline() returns a list containing executable path and file path.
         filePath = process.cmdline()[1]
 
         # split file path from the right to get a list containing directory and file name.
+        filePath = process.cmdline()[1]
         directoryAndFile = filePath.rsplit('\\', 1)
         print(directoryAndFile)

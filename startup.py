@@ -1,5 +1,6 @@
-import subprocess as sp
+import asyncio
 import webbrowser as wb
+import time
 
 # TO DO LIST
 # When computer starts up:
@@ -13,17 +14,28 @@ import webbrowser as wb
 # Check how long each file is open
 # If closed on the last page, remove from queue and add next volume (if it exists)
 
-def browserStartup():
-    wb.open_new_tab(r'https://www.youtube.com/')
-    wb.open_new_tab(r'https://genshin-center.com/planner')
-    wb.open_new_tab(r'https://webstatic-sea.mihoyo.com/ys/event/signin-sea/index.html?act_id=e202102251931481&lang=en-us')
+async def openURL(link):
+    print("Opening " + link)
+    print('start firefox /new-tab ' + link)
+    await asyncio.create_subprocess_shell('start firefox /new-tab ' + link)
 
-def ankiStartup():
-    sp.Popen([r'E:\Anki\anki.exe'], shell=True)
+async def browserStartup():
+    url = (
+        r'https://www.youtube.com/',
+        r'https://genshin-center.com/planner',
+        r'https://webstatic-sea.mihoyo.com/ys/event/signin-sea/index.html?act_id=e202102251931481&lang=en-us'
+    )
+    await asyncio.gather(*map(openURL, url))
+
+
+async def ankiStartup():
+    a = await asyncio.create_subprocess_shell(r'E:\Anki\anki.exe')
+    await a.wait()
+    print('anki was closed.')
 
 def main():
-    browserStartup()
-    ankiStartup()
+    asyncio.run(browserStartup())
+    asyncio.run(ankiStartup())
 
 if __name__ == '__main__':
     main()
