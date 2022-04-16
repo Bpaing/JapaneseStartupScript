@@ -1,9 +1,7 @@
 import pickle
-from signal import SIG_DFL
-import subprocess
 import time
 import asyncio
-import threading
+import psutil
 
 #I want the scripts to be able to keep track of files I'm currently reading.
 #Read from CBZ pickle list. Open every file.
@@ -18,28 +16,14 @@ import threading
 class CBZ:
     def __init__(self, path):
         self.path = path
-        self.runtime = 0
-        self.opened = 0
-        self.closed = 0
-        threading.Thread.__init__(self)
-
-    def run(self):
-        test = 0
-
-    def openCBZ(self):
-        self.s = subprocess.Popen([self.path], shell = True)
-        self.opened = time.time()
-        print(self.opened)
 
     async def trackRuntime(self):
-        s = await asyncio.create_subprocess_shell(r'E:\Users\Brendan\Downloads\Japanese\Content\読む\妹さえいればいい。\妹さえいればいい。 第14巻.cbz')
+        s = await asyncio.create_subprocess_shell(self.path)
         opened = time.time()
         await s.communicate()
         closed = time.time()
         print (closed - opened)
-    
-    def resetRuntime(self):
-        self.runtime = 0
+        return closed - opened
 
 def readCBZList():
     try:
@@ -58,11 +42,21 @@ def writeCBZList(data):
 async def trackCBZ():
     #list = readCBZList()
     list = [CBZ(r'E:\Users\Brendan\Downloads\Japanese\Content\読む\妹さえいればいい。\妹さえいればいい。 第14巻.cbz'), CBZ(r'E:\Users\Brendan\Downloads\Japanese\Content\読む\妹さえいればいい。\妹さえいればいい。 第13巻.cbz')]
-    c = await asyncio.gather(list[0].trackRuntime(), list[1].trackRuntime())
+    runtimeList = await asyncio.gather(list[0].trackRuntime())
+
 
 #s = subprocess.Popen([r'E:\Users\Brendan\Downloads\Japanese\Content\読む\妹さえいればいい。\妹さえいればいい。 第14巻.cbz'], shell = True)
-asyncio.run(trackCBZ())
+#asyncio.run(trackCBZ())
 #path = r'E:\Users\Brendan\Downloads\Japanese\Content\読む\妹さえいればいい。\妹さえいればいい。 第14巻.cbz'
-#for proc in psutil.process_iter(attrs=['pid', 'name']):
- #   if proc.name() == 'CDisplayEx.exe':
-  #      print(proc.open_files())
+
+
+#cmdline shows the path. can insert directly into CBZ().
+#cwd shows the directory the file is in.
+for process in psutil.process_iter():
+    if process.name() == 'CDisplayEx.exe':
+        # cmdline() returns a list containing executable path and file path.
+        filePath = process.cmdline()[1]
+
+        # split file path from the right to get a list containing directory and file name.
+        directoryAndFile = filePath.rsplit('\\', 1)
+        print(directoryAndFile)
