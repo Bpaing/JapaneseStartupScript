@@ -14,9 +14,10 @@ import psutil
 
 
 class CBZ:
-    def __init__(self, directory, filename):
+    def __init__(self, directory, filename, associatedProcess):
         self.directory = directory
         self.filename = filename
+        self.associatedProcess = associatedProcess
         self.runtime = 0
     
     def __eq__(self, other):
@@ -31,11 +32,13 @@ class CBZ:
     def getPath(self):
         return self.directory + "\\" + self.filename
 
+    async def waitForTerminate(self):
+        self.associatedProcess.wait()
+
     async def monitorRuntime(self):
         print("monitoring runtime of " + self.filename)
-        s = await asyncio.create_subprocess_shell(self.getPath())
         opened = time.time()
-        await s.wait()
+        await self.waitForTerminate()
         closed = time.time()
         print (closed - opened)
         self.runtime = closed - opened
@@ -65,15 +68,13 @@ async def ankiStartup():
     while (a.returncode != 0):
         await asyncio.sleep(7)
         currentlyOpen = set()
-
         for process in psutil.process_iter():
             if process.name() == 'CDisplayEx.exe':
                 # cmdline() returns a list containing executable path and file path.
                 filePath = process.cmdline()[1]
                 # split file path from the right to get a list containing directory and file name.
                 directoryFile = filePath.rsplit('\\', 1)
-                currentlyOpen.add(CBZ(directoryFile[0],directoryFile[1]))
-        print(a.returncode)
+                currentlyOpen.add(CBZ(directoryFile[0], directoryFile[1], process))
 
         newlyOpened = currentlyOpen.difference(totalOpened)
         await asyncio.gather(*map(CBZ.monitorRuntime, list(newlyOpened)))
@@ -92,4 +93,6 @@ async def ankiStartup():
 # if new elements are found in new_set
 #   new_set.difference_update(old_set)
 #   then add new_set elements to old_set
+
+# instead of running a separate asyncio instance, use psutil to monitor running instead?
 asyncio.run(ankiStartup())
