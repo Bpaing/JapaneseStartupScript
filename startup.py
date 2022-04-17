@@ -1,6 +1,7 @@
 import asyncio
 import webbrowser as wb
 import time
+import psutil
 
 # TO DO LIST
 # When computer starts up:
@@ -15,27 +16,19 @@ import time
 # If closed on the last page, remove from queue and add next volume (if it exists)
 
 async def openURL(link):
-    print("Opening " + link)
-    print('start firefox /new-tab ' + link)
     await asyncio.create_subprocess_shell('start firefox /new-tab ' + link)
 
 async def browserStartup():
-    url = (
+    url = [
         r'https://www.youtube.com/',
+        r'https://www.reddit.com/',
         r'https://genshin-center.com/planner',
         r'https://webstatic-sea.mihoyo.com/ys/event/signin-sea/index.html?act_id=e202102251931481&lang=en-us'
-    )
+    ]
     await asyncio.gather(*map(openURL, url))
-
-
-async def ankiStartup():
-    a = await asyncio.create_subprocess_shell(r'E:\Anki\anki.exe')
-    await a.wait()
-    print('anki was closed.')
 
 def main():
     asyncio.run(browserStartup())
-    asyncio.run(ankiStartup())
 
 if __name__ == '__main__':
     main()
