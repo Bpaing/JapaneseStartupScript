@@ -14,7 +14,9 @@ import psutil
 
 
 class CBZ:
-    def __init__(self, directory, filename, associatedProcess):
+
+
+    def __init__(self, directory, filename, associatedProcess=None):
         self.directory = directory
         self.filename = filename
         self.associatedProcess = associatedProcess
@@ -32,6 +34,20 @@ class CBZ:
     def getPath(self):
         return self.directory + "\\" + self.filename
 
+    # A running process is needed for monitorRuntime() to work.
+    # Searches for a CDisplayEx.exe process with the same file name.
+    def grabProcess(self):
+        for process in psutil.process_iter():
+            if process.name() == 'CDisplayEx.exe':
+                processFileName = process.cmdline()[1].rsplit('\\', 1)[1]
+                if processFileName == self.filename:
+                    self.associatedProcess = process
+    
+    async def open(self):
+        startProcess = await asyncio.create_subprocess_shell(self.getPath(), shell=True)
+        while (self.associatedProcess == None):
+            self.grabProcess()
+
     async def waitForTerminate(self):
         self.associatedProcess.wait()
 
@@ -39,9 +55,12 @@ class CBZ:
         print("monitoring runtime of " + self.filename)
         opened = time.time()
         await self.waitForTerminate()
+        print(self.filename + " was closed.")
         closed = time.time()
-        print (closed - opened)
-        self.runtime = closed - opened
+        self.runtime += closed - opened
+        print(self.runtime)
+        
+    
 
 def readCBZList():
     try:
@@ -59,7 +78,6 @@ def writeCBZList(data):
 
 async def trackCBZ():
     #list = readCBZList()
-    list = [CBZ(r'E:\Users\Brendan\Downloads\Japanese\Content\読む\妹さえいればいい。\妹さえいればいい。 第14巻.cbz'), CBZ(r'E:\Users\Brendan\Downloads\Japanese\Content\読む\妹さえいればいい。\妹さえいればいい。 第13巻.cbz')]
     runtimeList = await asyncio.gather(list[0].trackRuntime())
 
 async def ankiStartup():
@@ -82,17 +100,11 @@ async def ankiStartup():
         
     print('anki was closed.')
 
-
-#cmdline shows the path. can insert directly into CBZ().
-#cwd shows the directory the file is in.
-#By storing processes in a set, it is less computationally-intensive to monitor new processes.
-#difference() returns a new set
-#difference_update() removes items that exist in both sets
-
-# old_set and new_set
-# if new elements are found in new_set
-#   new_set.difference_update(old_set)
-#   then add new_set elements to old_set
-
 # instead of running a separate asyncio instance, use psutil to monitor running instead?
-asyncio.run(ankiStartup())
+# if I close a file then open it again, start monitoring from its current runtime value.
+# set comparison, if runtime > 0, start monitoring again?
+# when dumping pickle, get rid of currently running process
+#asyncio.run(ankiStartup())
+a = CBZ('E:\\Users\\Brendan\\Downloads\\Japanese\\Content\\読む\\妹さえいればいい。', '妹さえいればいい。 第14巻.cbz')
+asyncio.run(a.open())
+asyncio.run(a.monitorRuntime())
