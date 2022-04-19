@@ -34,6 +34,12 @@ class CBZ:
     def getPath(self):
         return self.directory + "\\" + self.filename
 
+    def setRuntime(self, timeClosed):
+        self.runtime = timeClosed - self.associatedProcess.create_time()
+
+    def addRuntime(self, time):
+        self.runtime += time
+
     # A running process is needed for monitorRuntime() to work.
     # Searches for a CDisplayEx.exe process with the same file name.
     def grabProcess(self):
@@ -42,25 +48,15 @@ class CBZ:
                 processFileName = process.cmdline()[1].rsplit('\\', 1)[1]
                 if processFileName == self.filename:
                     self.associatedProcess = process
+                    print("grabbed process of " + self.filename)
     
     async def open(self):
         startProcess = await asyncio.create_subprocess_shell(self.getPath(), shell=True)
         while (self.associatedProcess == None):
+            await asyncio.sleep(1)
             self.grabProcess()
-
-    async def waitForTerminate(self):
-        self.associatedProcess.wait()
-
-    async def monitorRuntime(self):
-        print("monitoring runtime of " + self.filename)
-        opened = time.time()
-        await self.waitForTerminate()
-        print(self.filename + " was closed.")
-        closed = time.time()
-        self.runtime += closed - opened
-        print(self.runtime)
+        await startProcess.wait()
         
-    
 
 def readCBZList():
     try:
@@ -72,39 +68,46 @@ def readCBZList():
     return list
 
 def writeCBZList(data):
+    for cbz in data:
+        cbz.associatedProcess = None
     pickle_out = open("cbz.pickle", "wb")
     pickle.dump(data, pickle_out)
     pickle_out.close()
 
-async def trackCBZ():
-    #list = readCBZList()
-    runtimeList = await asyncio.gather(list[0].trackRuntime())
+async def cbzStartup():
+    await asyncio.gather(*map(CBZ.open, readCBZList()))
 
-async def ankiStartup():
+# Starts Anki. Track runtime of opened cbz files while Anki is running.
+async def ankiMonitor():
     a = await asyncio.create_subprocess_shell(r'E:\Anki\anki.exe')
-    totalOpened = set()
+    totalCBZs = set()
     while (a.returncode != 0):
         await asyncio.sleep(7)
-        currentlyOpen = set()
+        currentCBZs = set()
         for process in psutil.process_iter():
             if process.name() == 'CDisplayEx.exe':
                 # cmdline() returns a list containing executable path and file path.
                 filePath = process.cmdline()[1]
                 # split file path from the right to get a list containing directory and file name.
                 directoryFile = filePath.rsplit('\\', 1)
-                currentlyOpen.add(CBZ(directoryFile[0], directoryFile[1], process))
 
-        newlyOpened = currentlyOpen.difference(totalOpened)
-        await asyncio.gather(*map(CBZ.monitorRuntime, list(newlyOpened)))
-        totalOpened.update(newlyOpened)
-        
+                currentCBZs.add(CBZ(directoryFile[0], directoryFile[1], process))
+
+        newCBZs = currentCBZs.difference(totalCBZs)
+        totalCBZs.update(newCBZs)
+
+        closedCBZs = totalCBZs.difference(currentCBZs)
+        for cbz in closedCBZs:
+            #if its in totalCBZs, add to time, else set time
+            cbz.setRuntime(time.time())
+       
+
     print('anki was closed.')
+    return list(totalCBZs).sort(key = lambda x: x.runtime)
 
 # instead of running a separate asyncio instance, use psutil to monitor running instead?
 # if I close a file then open it again, start monitoring from its current runtime value.
 # set comparison, if runtime > 0, start monitoring again?
 # when dumping pickle, get rid of currently running process
-#asyncio.run(ankiStartup())
-a = CBZ('E:\\Users\\Brendan\\Downloads\\Japanese\\Content\\読む\\妹さえいればいい。', '妹さえいればいい。 第14巻.cbz')
-asyncio.run(a.open())
-asyncio.run(a.monitorRuntime())
+asyncio.run(ankiMonitor())
+
