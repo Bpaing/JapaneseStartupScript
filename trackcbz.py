@@ -13,9 +13,11 @@ import psutil
 #Pickle those 4 files for the startup script to read from next time.
 
 
+# A CBZ object represents a viewable file.
+# This class was primarily created for viewing .cbz files.
+# A .cbz file is a renamed file archive (.zip, .rar, etc.) and
+# is primarily used with a comic book viewer application to read digital images.
 class CBZ:
-
-
     def __init__(self, directory, filename, associatedProcess=None):
         self.directory = directory
         self.filename = filename
@@ -28,35 +30,54 @@ class CBZ:
     def __hash__(self):
         return hash((self.directory, self.filename))
 
-    def __str__(self):
-        return self.filename
-
     def getPath(self):
         return self.directory + "\\" + self.filename
 
-    def setRuntime(self, timeClosed):
-        self.runtime = timeClosed - self.associatedProcess.create_time()
-
+    def hasProcess(self):
+        return self.associatedProcess != None
+    
+    def isRunning(self):
+        try:
+            return self.associatedProcess.is_running()
+        except Exception:
+            print("This object does not have an associated process.")
+        
+    # Adds a time value to runtime.
+    # Runtime requires a time of termination,
+    # implying the object no longer has an associated process.
     def addRuntime(self, time):
-        self.runtime += time
+        try:
+            print("adding " + str(time))
+            self.runtime += time
+            self.associatedProcess = None
+            print("total runtime = " + str(self.runtime))
+        except Exception:
+            print("This object does not have an associated process.")
+    
+    # Updates the CBZ with a new Process
+    # This is to account for the case that we reopen a cbz file
+    # and want to start tracking runtime again.
+    def updateProcess(self, process):
+        print("tracking runtime again....")
+        self.associatedProcess = process
 
-    # A running process is needed for monitorRuntime() to work.
-    # Searches for a CDisplayEx.exe process with the same file name.
-    def grabProcess(self):
+    # A running process is needed to calculate runtime correctly.
+    # Searches for a CDisplayEx.exe process with the same file name
+    # and instantiates Process field with the running process.
+    def __grabProcess(self):
         for process in psutil.process_iter():
             if process.name() == 'CDisplayEx.exe':
                 processFileName = process.cmdline()[1].rsplit('\\', 1)[1]
                 if processFileName == self.filename:
                     self.associatedProcess = process
-                    print("grabbed process of " + self.filename)
     
+    # Opens the file and grabs the running process.
     async def open(self):
-        startProcess = await asyncio.create_subprocess_shell(self.getPath(), shell=True)
+        program = await asyncio.create_subprocess_shell(self.getPath(), shell=True)
         while (self.associatedProcess == None):
             await asyncio.sleep(1)
-            self.grabProcess()
-        await startProcess.wait()
-        
+            self.__grabProcess()
+        await program.wait()
 
 def readCBZList():
     try:
@@ -77,37 +98,47 @@ def writeCBZList(data):
 async def cbzStartup():
     await asyncio.gather(*map(CBZ.open, readCBZList()))
 
-# Starts Anki. Track runtime of opened cbz files while Anki is running.
-async def ankiMonitor():
-    a = await asyncio.create_subprocess_shell(r'E:\Anki\anki.exe')
-    totalCBZs = set()
-    while (a.returncode != 0):
-        await asyncio.sleep(7)
-        currentCBZs = set()
-        for process in psutil.process_iter():
+
+def checkRunningProcesses(cbzList):
+    currentlyOpenCBZs = set()
+    for process in psutil.process_iter():
             if process.name() == 'CDisplayEx.exe':
                 # cmdline() returns a list containing executable path and file path.
                 filePath = process.cmdline()[1]
                 # split file path from the right to get a list containing directory and file name.
                 directoryFile = filePath.rsplit('\\', 1)
+                currentlyOpenCBZs.add(CBZ(directoryFile[0], directoryFile[1], process))
+    
+    # New cbz files were opened, add to the set
+    newlyOpenedCBZs = currentlyOpenCBZs.difference(cbzList)
+    cbzList.update(newlyOpenedCBZs)
 
-                currentCBZs.add(CBZ(directoryFile[0], directoryFile[1], process))
+    # Check set for closed cbzs, add runtime
+    for cbz in cbzList:
+        if cbz.hasProcess() and not cbz.isRunning():
+                runtime = time.time() - cbz.associatedProcess.create_time()
+                cbz.addRuntime(runtime)
 
-        newCBZs = currentCBZs.difference(totalCBZs)
-        totalCBZs.update(newCBZs)
 
-        closedCBZs = totalCBZs.difference(currentCBZs)
-        for cbz in closedCBZs:
-            #if its in totalCBZs, add to time, else set time
-            cbz.setRuntime(time.time())
-       
+# Starts a program using its executable path as an argument. 
+# Monitor runtime of opened cbz files while program is running.
+# After program is terminated, return list of CBZ objects sorted by runtime descending.
+async def cbzMonitor(executablePath):
+    program = await asyncio.create_subprocess_shell(executablePath)
+    allOpenedCBZs = set()
+    await asyncio.sleep(7)
+    while (program.returncode != 0):
+        await asyncio.sleep(1)
+        checkRunningProcesses(allOpenedCBZs)
 
+
+    
+        
     print('anki was closed.')
-    return list(totalCBZs).sort(key = lambda x: x.runtime)
+    return list(allOpenedCBZs).sort(key = lambda x: x.runtime, reverse = True)
 
 # instead of running a separate asyncio instance, use psutil to monitor running instead?
 # if I close a file then open it again, start monitoring from its current runtime value.
 # set comparison, if runtime > 0, start monitoring again?
 # when dumping pickle, get rid of currently running process
-asyncio.run(ankiMonitor())
-
+asyncio.run(cbzMonitor(r"E:\Anki\anki.exe"))
