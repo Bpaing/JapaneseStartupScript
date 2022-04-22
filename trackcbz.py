@@ -30,6 +30,9 @@ class CBZ:
     def __hash__(self):
         return hash((self.directory, self.filename))
 
+    def __str__(self):
+        return self.filename + " " + str(self.runtime)
+
     def getPath(self):
         return self.directory + "\\" + self.filename
 
@@ -42,13 +45,12 @@ class CBZ:
         except Exception:
             print("This object does not have an associated process.")
         
-    # Adds a time value to runtime.
-    # Runtime requires a time of termination,
-    # implying the object no longer has an associated process.
-    def addRuntime(self, time):
+    # Takes time of process termination to calculate total runtime.
+    # Also removes associated process to denote termination.
+    def calculateRuntime(self, time):
         try:
             print("adding " + str(time))
-            self.runtime += time
+            self.runtime += (time - self.associatedProcess.create_time())
             self.associatedProcess = None
             print("total runtime = " + str(self.runtime))
         except Exception:
@@ -98,28 +100,29 @@ def writeCBZList(data):
 async def cbzStartup():
     await asyncio.gather(*map(CBZ.open, readCBZList()))
 
-
-def checkRunningProcesses(cbzList):
-    currentlyOpenCBZs = set()
+def processMonitor(cbzSet):
     for process in psutil.process_iter():
-            if process.name() == 'CDisplayEx.exe':
-                # cmdline() returns a list containing executable path and file path.
-                filePath = process.cmdline()[1]
-                # split file path from the right to get a list containing directory and file name.
-                directoryFile = filePath.rsplit('\\', 1)
-                currentlyOpenCBZs.add(CBZ(directoryFile[0], directoryFile[1], process))
+        if process.name() == 'CDisplayEx.exe':
+            # cmdline() returns a list containing executable path and file path.
+            filePath = process.cmdline()[1]
+            # split file path from the right to get a list containing directory and file name.
+            directoryFile = filePath.rsplit('\\', 1)
+            
+            cbz = CBZ(directoryFile[0], directoryFile[1], process)
+
+            if cbz in cbzSet:
+                # grabs the original cbz in the set and updates its associated process.
+                # this addresses the case where files are reopened and we want to track runtime again.
+                original = {cbz}.intersection(cbzSet).pop()
+                if original.associatedProcess == None:
+                    original.updateProcess(process)
+            else:
+                cbzSet.add(cbz)
     
-    # New cbz files were opened, add to the set
-    newlyOpenedCBZs = currentlyOpenCBZs.difference(cbzList)
-    cbzList.update(newlyOpenedCBZs)
-
-    # Check set for closed cbzs, add runtime
-    for cbz in cbzList:
+    for cbz in cbzSet:
         if cbz.hasProcess() and not cbz.isRunning():
-                runtime = time.time() - cbz.associatedProcess.create_time()
-                cbz.addRuntime(runtime)
-
-
+            cbz.calculateRuntime(time.time())
+    
 # Starts a program using its executable path as an argument. 
 # Monitor runtime of opened cbz files while program is running.
 # After program is terminated, return list of CBZ objects sorted by runtime descending.
@@ -129,16 +132,20 @@ async def cbzMonitor(executablePath):
     await asyncio.sleep(7)
     while (program.returncode != 0):
         await asyncio.sleep(1)
-        checkRunningProcesses(allOpenedCBZs)
+        processMonitor(allOpenedCBZs)
 
-
-    
-        
     print('anki was closed.')
-    return list(allOpenedCBZs).sort(key = lambda x: x.runtime, reverse = True)
+    return allOpenedCBZs
+
+
+
+
+
+
 
 # instead of running a separate asyncio instance, use psutil to monitor running instead?
 # if I close a file then open it again, start monitoring from its current runtime value.
 # set comparison, if runtime > 0, start monitoring again?
 # when dumping pickle, get rid of currently running process
-asyncio.run(cbzMonitor(r"E:\Anki\anki.exe"))
+sortedList = asyncio.run(cbzMonitor(r"E:\Anki\anki.exe"))
+
