@@ -1,3 +1,4 @@
 
 *.pyc
+*.pickle
 DailyRoutineAutomation/__pycache__/
