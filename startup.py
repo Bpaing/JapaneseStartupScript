@@ -1,5 +1,7 @@
-import asyncio
 import webbrowser
+from trackcbz import *
+from backup import *
+
 # TO DO LIST
 # When computer starts up:
 # Open Anki
@@ -15,17 +17,25 @@ import webbrowser
 async def openURL(link):
     webbrowser.open_new_tab(link)
 
-async def browserStartup():
-    url = [
+async def browserStartup(urlList):
+    await asyncio.gather(*map(openURL, urlList))
+
+async def main():
+    urlList = [
         r'https://www.youtube.com/',
         r'https://www.reddit.com/',
         r'https://genshin-center.com/planner',
         r'https://webstatic-sea.mihoyo.com/ys/event/signin-sea/index.html?act_id=e202102251931481&lang=en-us'
     ]
-    await asyncio.gather(*map(openURL, url))
+    await browserStartup(urlList)
+    await cbzStartup()
+    #Also start podcast playlist
+    list = await trackCBZWhileOpen(r'E:\Anki\anki.exe')
 
-def main():
-    asyncio.run(browserStartup())
+    #Sort list by runtime, pickle top 4
+    writeCBZList(list)
+
+    #backup.py functions here
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

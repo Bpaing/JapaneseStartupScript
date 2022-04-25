@@ -44,7 +44,8 @@ class CBZ:
             return self.associatedProcess.is_running()
         except Exception:
             print("This object does not have an associated process.")
-        
+
+
     # Takes time of process termination to calculate total runtime.
     # Also removes associated process to denote termination.
     def calculateRuntime(self, time):
@@ -56,12 +57,14 @@ class CBZ:
         except Exception:
             print("This object does not have an associated process.")
     
+
     # Updates the CBZ with a new Process
     # This is to account for the case that we reopen a cbz file
     # and want to start tracking runtime again.
     def updateProcess(self, process):
         print("tracking runtime again....")
         self.associatedProcess = process
+
 
     # A running process is needed to calculate runtime correctly.
     # Searches for a CDisplayEx.exe process with the same file name
@@ -126,26 +129,18 @@ def processMonitor(cbzSet):
 # Starts a program using its executable path as an argument. 
 # Monitor runtime of opened cbz files while program is running.
 # After program is terminated, return list of CBZ objects sorted by runtime descending.
-async def cbzMonitor(executablePath):
+async def trackCBZWhileOpen(executablePath):
     program = await asyncio.create_subprocess_shell(executablePath)
     allOpenedCBZs = set()
     await asyncio.sleep(7)
     while (program.returncode != 0):
         await asyncio.sleep(1)
         processMonitor(allOpenedCBZs)
-
-    print('anki was closed.')
     return allOpenedCBZs
-
-
-
-
-
 
 
 # instead of running a separate asyncio instance, use psutil to monitor running instead?
 # if I close a file then open it again, start monitoring from its current runtime value.
 # set comparison, if runtime > 0, start monitoring again?
 # when dumping pickle, get rid of currently running process
-sortedList = asyncio.run(cbzMonitor(r"E:\Anki\anki.exe"))
 
