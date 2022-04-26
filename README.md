@@ -8,6 +8,7 @@ It uses the runtime of open files to determine what to open on next startup.
 
 
 UPDATE 04/25/2022
+
 At this point, the original logic I wanted to create is finished. Below are some things I would like to implement in the future.
 
 - Perform backup routine after monitoring program is terminated
