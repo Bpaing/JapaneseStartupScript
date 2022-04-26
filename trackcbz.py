@@ -35,6 +35,9 @@ class CBZ:
 
     def getPath(self):
         return self.directory + "\\" + self.filename
+    
+    def getRuntime(self):
+        return self.runtime
 
     def hasProcess(self):
         return self.associatedProcess != None
@@ -50,10 +53,8 @@ class CBZ:
     # Also removes associated process to denote termination.
     def calculateRuntime(self, time):
         try:
-            print("adding " + str(time))
             self.runtime += (time - self.associatedProcess.create_time())
             self.associatedProcess = None
-            print("total runtime = " + str(self.runtime))
         except Exception:
             print("This object does not have an associated process.")
     
@@ -62,7 +63,6 @@ class CBZ:
     # This is to account for the case that we reopen a cbz file
     # and want to start tracking runtime again.
     def updateProcess(self, process):
-        print("tracking runtime again....")
         self.associatedProcess = process
 
 
@@ -82,7 +82,6 @@ class CBZ:
         while (self.associatedProcess == None):
             await asyncio.sleep(1)
             self.__grabProcess()
-        await program.wait()
 
 def readCBZList():
     try:

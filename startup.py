@@ -20,6 +20,9 @@ async def openURL(link):
 async def browserStartup(urlList):
     await asyncio.gather(*map(openURL, urlList))
 
+async def startProcess(executablePath):
+    await asyncio.create_subprocess_shell(executablePath)
+
 async def main():
     urlList = [
         r'https://www.youtube.com/',
@@ -27,13 +30,17 @@ async def main():
         r'https://genshin-center.com/planner',
         r'https://webstatic-sea.mihoyo.com/ys/event/signin-sea/index.html?act_id=e202102251931481&lang=en-us'
     ]
-    await browserStartup(urlList)
+    #await browserStartup(urlList)
     await cbzStartup()
     #Also start podcast playlist
-    list = await trackCBZWhileOpen(r'E:\Anki\anki.exe')
 
     #Sort list by runtime, pickle top 4
-    writeCBZList(list)
+    n = 4
+    files = sorted(await trackCBZWhileOpen(r'E:\Anki\anki.exe'), key=lambda x: x.runtime, reverse=True)
+    filesToPickle = files[:n]
+    for cbz in filesToPickle:
+        print(cbz)
+    writeCBZList(filesToPickle)
 
     #backup.py functions here
 
