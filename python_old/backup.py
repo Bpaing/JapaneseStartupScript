@@ -1,5 +1,7 @@
 import os
+import anki
 # This is the python program for backing up my files.
+# 'anki' module is used specifically for creating backups of my Anki flashcard decks for studying.
 
 # To do list:
 # get anki to export collection on sync
