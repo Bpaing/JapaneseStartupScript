@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RoutineManager.MVVM.ViewModel
+﻿namespace RoutineManager.MVVM.ViewModel
 {
-    public class BaseViewModel : INotifyPropertyChanged
+    public class BaseViewModel
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+
     }
 }
