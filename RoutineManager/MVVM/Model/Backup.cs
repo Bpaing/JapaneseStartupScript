@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace RoutineManager.MVVM.Model
 {
     //Backup store strings to create and run rclone commands in CMD.
-    public class BackupModel
+    public class Backup
     {
         public string Program { get; set; }
         public string Action { get; set; }

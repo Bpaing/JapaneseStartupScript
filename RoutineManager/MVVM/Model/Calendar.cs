@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoutineManager.MVVM.Model
 {
-    public class MonitorModel
+    public class Calendar
     {
     }
 }
