@@ -1,6 +1,6 @@
 *.pyc
 *.pickle
 **/__pycache__/
-**/.vs/
+**/.vs/*
 **/[Pp]ackages/*
 !**/[Pp]ackages/build/
