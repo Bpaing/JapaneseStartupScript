@@ -5,6 +5,8 @@ VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoutineManager", "RoutineManager.csproj", "{41676B0E-4B58-4669-9D45-D4307742FCFB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoutineManagerTest", "..\RoutineManagerTest\RoutineManagerTest.csproj", "{0D7B38AF-D774-4D68-B4BA-6EE429E7C8AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{41676B0E-4B58-4669-9D45-D4307742FCFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41676B0E-4B58-4669-9D45-D4307742FCFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41676B0E-4B58-4669-9D45-D4307742FCFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D7B38AF-D774-4D68-B4BA-6EE429E7C8AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D7B38AF-D774-4D68-B4BA-6EE429E7C8AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D7B38AF-D774-4D68-B4BA-6EE429E7C8AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D7B38AF-D774-4D68-B4BA-6EE429E7C8AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

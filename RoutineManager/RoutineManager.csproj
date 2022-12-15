@@ -97,11 +97,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MVVM\Model\BackupModel.cs" />
-    <Compile Include="MVVM\Model\CalendarModel.cs" />
-    <Compile Include="MVVM\Model\MonitorModel.cs" />
-    <Compile Include="MVVM\Model\StartupModel.cs" />
+    <Compile Include="MVVM\Model\Backup.cs" />
+    <Compile Include="MVVM\Model\Calendar.cs" />
+    <Compile Include="MVVM\Model\Monitor.cs" />
+    <Compile Include="MVVM\Model\Startup.cs" />
+    <Compile Include="MVVM\Service\BackupService.cs" />
+    <Compile Include="MVVM\Service\CalendarService.cs" />
+    <Compile Include="MVVM\Service\MonitorService.cs" />
+    <Compile Include="MVVM\Service\StartupService.cs" />
     <Compile Include="MVVM\ViewModel\BackupViewModel.cs" />
+    <Compile Include="MVVM\ViewModel\BaseViewModel.cs" />
     <Compile Include="MVVM\ViewModel\CalendarViewModel.cs" />
     <Compile Include="MVVM\ViewModel\MonitorViewModel.cs" />
     <Compile Include="MVVM\ViewModel\StartupViewModel.cs" />
@@ -133,7 +138,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="MVVM\View\" />
-    <Folder Include="Unit Testing\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\CommunityToolkit.Mvvm.8.0.0\build\netstandard2.0\CommunityToolkit.Mvvm.targets" Condition="Exists('packages\CommunityToolkit.Mvvm.8.0.0\build\netstandard2.0\CommunityToolkit.Mvvm.targets')" />
