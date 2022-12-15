@@ -2,5 +2,6 @@
 *.pickle
 **/__pycache__/
 **/.vs/*
+**/obj/
 **/[Pp]ackages/*
 !**/[Pp]ackages/build/
