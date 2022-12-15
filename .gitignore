@@ -1,3 +1,6 @@
 *.pyc
 *.pickle
-DailyRoutineAutomation/python_old/__pycache__/
+**/__pycache__/
+**/.vs/
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
