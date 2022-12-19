@@ -8,41 +8,61 @@ namespace RoutineManager.MVVM.Service
     public class StartupService
     {
         private Startup startup;
-        public void openURL(params string[] urlList)
+
+        public int openURL(params string[] urlList)
         {
+            int urlsOpened = 0;
             for (int i = 0; i < urlList.Length; i++)
             {
                 string url = urlList[i];
-                if (checkURL(url))
-                    startProcess(url);
+                if (isValidURL(url))
+                {
+                    //startProcess(url);
+                    urlsOpened++;
+                }
             }
+            return urlsOpened;
         }
 
-        public void openFile(params string[] fileList)
+        public int openFile(params string[] fileList)
         {
+            int filesOpened = 0;
             for (int i = 0; i < fileList.Length; i++)
             {
                 string filePath = fileList[i];
-                if (checkFilePath(filePath))
-                    startProcess(filePath);
+                if (isValidFilePath(filePath))
+                {
+                    //startProcess(filePath);
+                    filesOpened++;
+                }
             }
+            return filesOpened;
         }
 
-        public void startProcess(string processName)
+        public bool startProcess(string processName)
         {
-            Process.Start(new ProcessStartInfo($"{processName}") { UseShellExecute = true });
+            try
+            {
+                Process.Start(new ProcessStartInfo($"{processName}") { UseShellExecute = true });
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            
         }
 
         //Returns true if the given string is a valid HTTP or HTTPS url.
-        private static bool checkURL(string str)
+        public static bool isValidURL(string str)
         {
             Uri uriResult;
-            return Uri.TryCreate(str, UriKind.Absolute, out uriResult) && 
+            return Uri.TryCreate(str, UriKind.Absolute, out uriResult) &&
                 (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
 
         //Returns true if the given string is a valid absolute file path in the user's system.
-        private static bool checkFilePath(string str)
+        public static bool isValidFilePath(string str)
         {
             return Directory.Exists(str);
         }
