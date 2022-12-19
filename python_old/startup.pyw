@@ -28,7 +28,7 @@ async def main():
         r'https://www.youtube.com/',
         r'https://www.reddit.com/',
         r'https://genshin-center.com/planner',
-        r'https://webstatic-sea.mihoyo.com/ys/event/signin-sea/index.html?act_id=e202102251931481&lang=en-us'
+        r'https://act.hoyolab.com/ys/event/signin-sea-v3/index.html?act_id=e202102251931481'
     ]
     await browserStartup(urlList)
     await cbzStartup()

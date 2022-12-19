@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using RoutineManager.MVVM.Model;
 
 namespace RoutineManager.MVVM.Service
@@ -17,22 +13,39 @@ namespace RoutineManager.MVVM.Service
             for (int i = 0; i < urlList.Length; i++)
             {
                 string url = urlList[i];
-                if (checkURLValid(url))
-                    Process.Start(new ProcessStartInfo($"{url}") { UseShellExecute = true });
+                if (checkURL(url))
+                    startProcess(url);
             }
         }
 
+        public void openFile(params string[] fileList)
+        {
+            for (int i = 0; i < fileList.Length; i++)
+            {
+                string filePath = fileList[i];
+                if (checkFilePath(filePath))
+                    startProcess(filePath);
+            }
+        }
+
+        public void startProcess(string processName)
+        {
+            Process.Start(new ProcessStartInfo($"{processName}") { UseShellExecute = true });
+        }
+
         //Returns true if the given string is a valid HTTP or HTTPS url.
-        private static bool checkURLValid(string str)
+        private static bool checkURL(string str)
         {
             Uri uriResult;
             return Uri.TryCreate(str, UriKind.Absolute, out uriResult) && 
                 (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
 
-        public async Task startProcess()
+        //Returns true if the given string is a valid absolute file path in the user's system.
+        private static bool checkFilePath(string str)
         {
-            await Task.Delay(100);
+            return Directory.Exists(str);
         }
+
     }
 }
