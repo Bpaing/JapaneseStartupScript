@@ -1,4 +1,3 @@
-using RoutineManager;
 using RoutineManager.MVVM.Service;
 
 namespace RoutineManagerTest
@@ -94,26 +93,6 @@ namespace RoutineManagerTest
 
             //Assert
             Assert.False(result);
-        }
-
-        [Fact]
-        public void startProcess_WithValidCommand_ShouldReturnTrue()
-        {
-            //Arrange
-
-            //Act
-
-            //Assert
-        }
-
-        [Fact]
-        public void startProcess_WithInvalidCommand_ShouldReturnFalse()
-        {
-            //Arrange
-
-            //Act
-
-            //Assert
         }
 
     }

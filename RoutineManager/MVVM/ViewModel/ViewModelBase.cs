@@ -1,6 +1,6 @@
 ﻿namespace RoutineManager.MVVM.ViewModel
 {
-    public class BaseViewModel
+    public partial class ViewModelBase
     {
 
     }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoutineManager.MVVM.ViewModel
 {
-    public class CalendarViewModel : BaseViewModel
+    public class CalendarViewModel : ViewModelBase
     {
     }
 }

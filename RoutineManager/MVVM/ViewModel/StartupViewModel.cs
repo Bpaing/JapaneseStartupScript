@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoutineManager.MVVM.ViewModel
 {
-    internal class StartupViewModel : BaseViewModel
+    internal class StartupViewModel : ViewModelBase
     {
     }
 }

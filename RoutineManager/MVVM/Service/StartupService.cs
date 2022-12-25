@@ -7,37 +7,7 @@ namespace RoutineManager.MVVM.Service
 {
     public class StartupService
     {
-        private Startup startup;
-
-        public int openURL(params string[] urlList)
-        {
-            int urlsOpened = 0;
-            for (int i = 0; i < urlList.Length; i++)
-            {
-                string url = urlList[i];
-                if (isValidURL(url))
-                {
-                    //startProcess(url);
-                    urlsOpened++;
-                }
-            }
-            return urlsOpened;
-        }
-
-        public int openFile(params string[] fileList)
-        {
-            int filesOpened = 0;
-            for (int i = 0; i < fileList.Length; i++)
-            {
-                string filePath = fileList[i];
-                if (isValidFilePath(filePath))
-                {
-                    //startProcess(filePath);
-                    filesOpened++;
-                }
-            }
-            return filesOpened;
-        }
+        private Startup _startup;
 
         public bool startProcess(string processName)
         {

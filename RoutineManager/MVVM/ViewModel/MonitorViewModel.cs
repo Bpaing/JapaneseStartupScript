@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoutineManager.MVVM.ViewModel
 {
-    internal class MonitorViewModel : BaseViewModel
+    internal class MonitorViewModel : ViewModelBase
     {
     }
 }
