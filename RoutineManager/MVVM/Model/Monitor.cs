@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoutineManager.MVVM.Model
 {
-    internal class StartupModel
+    public class Monitor
     {
     }
 }

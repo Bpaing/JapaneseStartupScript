@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoutineManager.MVVM.Model
+namespace RoutineManager.MVVM.Service
 {
-    internal class CalendarModel
+    public class BackupService
     {
     }
 }

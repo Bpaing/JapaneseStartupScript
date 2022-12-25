@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoutineManager.MVVM.ViewModel
+namespace RoutineManager.MVVM.Service
 {
-    internal class MonitorViewModel : ViewModelBase
+    public class CalendarService
     {
     }
 }
