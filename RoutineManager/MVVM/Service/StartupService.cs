@@ -5,7 +5,7 @@ using RoutineManager.MVVM.Model;
 
 namespace RoutineManager.MVVM.Service
 {
-    public class StartupService
+    public class StartupService : IStartupService
     {
         private Startup _startup;
 
@@ -24,7 +24,7 @@ namespace RoutineManager.MVVM.Service
         }
 
         //Returns true if the given string is a valid HTTP or HTTPS url.
-        public static bool isValidURL(string str)
+        public bool isValidURL(string str)
         {
             Uri uriResult;
             return Uri.TryCreate(str, UriKind.Absolute, out uriResult) &&
@@ -32,7 +32,7 @@ namespace RoutineManager.MVVM.Service
         }
 
         //Returns true if the given string is a valid absolute file path in the user's system.
-        public static bool isValidFilePath(string str)
+        public bool isValidFilePath(string str)
         {
             return Directory.Exists(str);
         }

@@ -12,7 +12,7 @@ namespace RoutineManager.MVVM.Model
     //Startup will open browser URLs and start processes based on user input.
     public class Startup
     {
-        public List<Url> Uris { get; set; }
-        public List<Process> Processes { get; set; }
+        public List<String> Urls { get; set; }
+        public List<String> FilePaths { get; set; }
     }
 }
