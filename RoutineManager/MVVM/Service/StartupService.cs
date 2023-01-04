@@ -7,8 +7,6 @@ namespace RoutineManager.MVVM.Service
 {
     public class StartupService : IStartupService
     {
-        private Startup _startup;
-
         public bool startProcess(string processName)
         {
             try

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using RoutineManager.MVVM.Service;
 using System;
 using System.Collections.Generic;
@@ -38,10 +39,50 @@ namespace RoutineManager.MVVM.ViewModel
         public StartupViewModel(IStartupService startupService)
         {
             StartupService = startupService;
-            
         }
 
-        public ObservableCollection<string> Paths { get; } = new ObservableCollection<string>();
+
+        //Validate each url/filepath. If all pass, start processes and save to settings for later.
+        [RelayCommand]
+        private void ProcessForm()
+        {
+
+        }
+
+
+        //Adds an input row.
+        [RelayCommand]
+        private void AddItem()
+        {
+
+        }
+
+        //Deletes an input row.
+        [RelayCommand]
+        private void DeleteItem()
+        {
+
+        }
+
+        //https://stackoverflow.com/questions/1619505/wpf-openfiledialog-with-the-mvvm-pattern
+        [RelayCommand]
+        private void ChooseFile()
+        {
+
+        }
+
+        //Loads data saved by Monitor service into MonitorData.
+        //This should be ran everytime the application starts up.
+        //Does nothing if data loaded is identical or data does not exist.
+        private void LoadMonitorData()
+        {
+
+        }
+
+        public ObservableCollection<string> Urls { get; } = new ObservableCollection<string>();
+        public ObservableCollection<string> FilePaths { get; } = new ObservableCollection<string>();
+
+        public ObservableCollection<string> MonitorData { get; } = new ObservableCollection<string>();
 
     }
 }

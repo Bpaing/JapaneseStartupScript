@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 namespace RoutineManager.MVVM.Model
 {
 
-    //Startup will open browser URLs and start processes based on user input.
-    public class Startup
+    public class StartupItem
     {
-        public List<String> Urls { get; set; }
-        public List<String> FilePaths { get; set; }
+        public String Alias { get; set; }
+
+        //Represents the absolute path of a file or a valid URL.
+        public String Path { get; set; }
     }
 }
