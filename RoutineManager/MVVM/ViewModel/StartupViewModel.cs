@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using RoutineManager.MVVM.Model;
 using RoutineManager.MVVM.Service;
 using System;
 using System.Collections.Generic;
@@ -32,9 +33,10 @@ namespace RoutineManager.MVVM.ViewModel
      *  (create prompts when attempting to edit or delete)
      *  
      */
-    public partial class StartupViewModel : ObservableObject
+    public partial class StartupViewModel : ViewModelBase
     {
         private readonly IStartupService StartupService;
+        private ObservableCollection<StartupItem> ItemList { get; } = new();
 
         public StartupViewModel(IStartupService startupService)
         {
@@ -51,15 +53,29 @@ namespace RoutineManager.MVVM.ViewModel
 
 
         //Adds an input row.
+        //https://stackoverflow.com/questions/24960476/dynamically-adding-textbox-using-a-button-within-mvvm-framework
         [RelayCommand]
         private void AddItem()
         {
-
+            this.ItemList.Add(new StartupItem());
         }
 
         //Deletes an input row.
         [RelayCommand]
-        private void DeleteItem()
+        private void DeleteItem(object selectedItem)
+        {
+            try
+            {
+                this.ItemList.Remove((StartupItem)selectedItem);
+            }
+            catch
+            {
+
+            }
+        }
+
+        [RelayCommand]
+        private void EditItem()
         {
 
         }
@@ -78,11 +94,6 @@ namespace RoutineManager.MVVM.ViewModel
         {
 
         }
-
-        public ObservableCollection<string> Urls { get; } = new ObservableCollection<string>();
-        public ObservableCollection<string> FilePaths { get; } = new ObservableCollection<string>();
-
-        public ObservableCollection<string> MonitorData { get; } = new ObservableCollection<string>();
 
     }
 }

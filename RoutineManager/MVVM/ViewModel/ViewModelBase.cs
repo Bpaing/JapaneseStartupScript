@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace RoutineManager.MVVM.ViewModel
 {
-    public partial class ViewModelBase : ObservableRecipient
+    [ObservableObject]
+    public partial class ViewModelBase
     {
 
     }

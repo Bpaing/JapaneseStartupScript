@@ -2,8 +2,27 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:RoutineManager"
-             StartupUri="MainWindow.xaml">
+             xmlns:viewModel="clr-namespace:RoutineManager.MVVM.ViewModel"
+             xmlns:view="clr-namespace:RoutineManager.MVVM.View">
     <Application.Resources>
-         
+        <ResourceDictionary>
+       
+            <DataTemplate DataType="{x:Type viewModel:StartupViewModel}">
+                <view:StartupView/>
+            </DataTemplate>
+            
+            <DataTemplate DataType="{x:Type viewModel:MonitorViewModel}">
+                <view:MonitorView/>
+            </DataTemplate>
+            
+            <DataTemplate DataType="{x:Type viewModel:BackupViewModel}">
+                <view:BackupView/>
+            </DataTemplate>
+            
+            <DataTemplate DataType="{x:Type viewModel:CalendarViewModel}">
+                <view:CalendarView/>
+            </DataTemplate>
+            
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

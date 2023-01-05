@@ -1,7 +1,7 @@
 ﻿using RoutineManager.MVVM.ViewModel;
 using System.Windows;
 
-namespace RoutineManager
+namespace RoutineManager.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -11,7 +11,6 @@ namespace RoutineManager
         public MainWindow()
         {
             InitializeComponent();
-            //BindingContext = new MainViewModel();
         }
     }
 }

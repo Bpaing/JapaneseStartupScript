@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace RoutineManager.MVVM.Model
 {
-
     public class StartupItem
     {
-        public String Alias { get; set; }
+        public string? Alias { get; set; }
+
 
         //Represents the absolute path of a file or a valid URL.
-        public String Path { get; set; }
+        //Only visible when editing a StartupItem on the application.
+        public string? Path { get; set; }
     }
 }
