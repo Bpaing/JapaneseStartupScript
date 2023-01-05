@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoutineManager.MVVM.ViewModel
 {
-    internal class BackupViewModel : ViewModelBase
+    public class BackupViewModel : ViewModelBase
     {
     }
 }

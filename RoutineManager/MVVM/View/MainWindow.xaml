@@ -44,9 +44,11 @@
                          Grid.Row="1"
                          Grid.Column="0">
                 <Button Background="#272530" Foreground="White">Startup</Button>
-                <Button Background="#272530" Foreground="White">Monitor</Button>
+                <Button Background="#272530" Foreground="White" 
+                        Command="{Binding DisplayMonitorCommand}">Monitor</Button>
                 <Button Background="#272530" Foreground="White">Backup</Button>
-                <Button Background="#272530" Foreground="White">Calendar</Button>
+                <Button Background="#272530" Foreground="White"
+                        Command="{Binding DisplayCalendarCommand}">Calendar</Button>
             </UniformGrid>
 
             <ContentControl Grid.Row="1"

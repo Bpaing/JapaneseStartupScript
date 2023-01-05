@@ -5,16 +5,37 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace RoutineManager.MVVM.ViewModel
 {
-    public partial class MainViewModel : ViewModelBase
+    [ObservableObject]
+    public partial class MainViewModel
     {
         [ObservableProperty]
         private ViewModelBase _currentView;
 
+        public MonitorViewModel MonitorViewModel { get; set; }
+        public CalendarViewModel CalendarViewModel { get; set; }
+        public BackupViewModel BackupViewModel { get; set; }
 
         public MainViewModel()
         {
-            _currentView = new MonitorViewModel();
+            MonitorViewModel = new MonitorViewModel();
+            CalendarViewModel = new CalendarViewModel();
+            BackupViewModel = new BackupViewModel();
+            CurrentView = BackupViewModel;
         }
+
+        [RelayCommand]
+        public void DisplayMonitor()
+        {
+            CurrentView = MonitorViewModel;
+        }
+
+        [RelayCommand]
+        public void DisplayCalendar()
+        {
+            CurrentView = CalendarViewModel;
+        }
+
+
 
     }
 }
