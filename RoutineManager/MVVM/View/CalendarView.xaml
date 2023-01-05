@@ -6,12 +6,11 @@
              xmlns:local="clr-namespace:RoutineManager.MVVM.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid>
-            <TextBlock Foreground="White"
+    <StackPanel>
+        <TextBlock Foreground="White"
                    FontSize="50">
             CALENDAR
-            </TextBlock>
-        </Grid>
-    </Grid>
+        </TextBlock>
+        <TextBox></TextBox>
+    </StackPanel>
 </UserControl>

@@ -35,12 +35,12 @@ namespace RoutineManager.MVVM.ViewModel
      */
     public partial class StartupViewModel : ViewModelBase
     {
-        private readonly IStartupService StartupService;
+        private readonly IStartupService? _startupService;
         private ObservableCollection<StartupItem> ItemList { get; } = new();
 
         public StartupViewModel(IStartupService startupService)
         {
-            StartupService = startupService;
+            _startupService = startupService;
         }
 
 

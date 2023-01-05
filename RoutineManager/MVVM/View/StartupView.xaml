@@ -6,10 +6,11 @@
              xmlns:local="clr-namespace:RoutineManager.MVVM.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <StackPanel>
         <TextBlock Foreground="White"
                    FontSize="50">
             STARTUP
         </TextBlock>
-    </Grid>
+        <TextBox></TextBox>
+    </StackPanel>
 </UserControl>

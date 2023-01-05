@@ -1,41 +1,44 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography.X509Certificates;
 
 namespace RoutineManager.MVVM.ViewModel
 {
-    [ObservableObject]
-    public partial class MainViewModel
+    public partial class MainViewModel : ViewModelBase
     {
         [ObservableProperty]
-        private ViewModelBase _currentView;
-
-        public MonitorViewModel MonitorViewModel { get; set; }
-        public CalendarViewModel CalendarViewModel { get; set; }
-        public BackupViewModel BackupViewModel { get; set; }
+        private ViewModelBase? _currentView;
 
         public MainViewModel()
         {
-            MonitorViewModel = new MonitorViewModel();
-            CalendarViewModel = new CalendarViewModel();
-            BackupViewModel = new BackupViewModel();
-            CurrentView = BackupViewModel;
+            CurrentView = App.Current.Services.GetService<StartupViewModel>();
+        }
+
+        [RelayCommand]
+        public void DisplayStartup()
+        {
+            CurrentView = App.Current.Services.GetService<StartupViewModel>();
         }
 
         [RelayCommand]
         public void DisplayMonitor()
         {
-            CurrentView = MonitorViewModel;
+            CurrentView = App.Current.Services.GetService<MonitorViewModel>();
+        }
+
+        [RelayCommand]
+        public void DisplayBackup()
+        {
+            CurrentView = App.Current.Services.GetService<BackupViewModel>();
         }
 
         [RelayCommand]
         public void DisplayCalendar()
         {
-            CurrentView = CalendarViewModel;
+            CurrentView = App.Current.Services.GetService<CalendarViewModel>();
         }
-
-
 
     }
 }
