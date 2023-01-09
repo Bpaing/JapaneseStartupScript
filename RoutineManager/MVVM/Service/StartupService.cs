@@ -35,5 +35,14 @@ namespace RoutineManager.MVVM.Service
             return Directory.Exists(str);
         }
 
+        public bool readMonitorDataFromFile(string filePath)
+        {
+            if (!isValidFilePath(filePath))
+                return false;
+
+            //Deserialize and start processes
+            return true;
+        }
+
     }
 }

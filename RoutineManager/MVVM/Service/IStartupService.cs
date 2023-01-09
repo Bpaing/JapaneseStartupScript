@@ -11,5 +11,6 @@ namespace RoutineManager.MVVM.Service
         bool startProcess(string processName);
         bool isValidURL(string str);
         bool isValidFilePath(string str);
+        bool readMonitorDataFromFile(string filePath);
     }
 }
