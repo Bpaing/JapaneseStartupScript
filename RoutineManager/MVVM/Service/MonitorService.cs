@@ -49,6 +49,37 @@ namespace RoutineManager.MVVM.Service
             return Directory.Exists(str);
         }
 
+        /*
+         * https://learn.microsoft.com/en-us/dotnet/api/system.management.managementeventwatcher?view=dotnet-plat-ext-7.0
+         * https://learn.microsoft.com/en-us/dotnet/api/system.management.managementeventwatcher.-ctor?view=dotnet-plat-ext-7.0#system-management-managementeventwatcher-ctor
+            using System.Diagnostics;
+            using System.Management;
+            using System.Text.RegularExpressions;
 
+            Process[] pp = Process.GetProcesses();
+            Regex regex = new Regex("\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)'|[^\\s]+");
+            foreach (var process in pp)
+            {
+
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + process.Id))
+                using (ManagementObjectCollection objects = searcher.Get())
+                {
+                    var cmdArguments = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
+                    if (cmdArguments != null)
+                    {
+                        var fileName = regex.Split(cmdArguments);
+                        foreach (var s in fileName)
+                        {
+                            s.Trim();
+                            if (!s.Equals(" ") && !s.Equals(string.Empty) && s.Contains(".cbz"))
+                            {
+                                Console.WriteLine(s);
+                            }
+               
+                        }
+                    }
+                }
+            }
+         */
     }
 }
