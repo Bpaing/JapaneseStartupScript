@@ -12,7 +12,7 @@ namespace RoutineManager.MVVM.Service
 
         bool grabProcess();
         bool monitorProcess();
-        TimeSpan getRuntime();
+        TimeSpan getRuntime(object sender);
 
         bool isValidFilePath(string str);
         bool writeListToFile(int numProcessesToSave);

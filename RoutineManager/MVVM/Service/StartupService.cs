@@ -9,16 +9,13 @@ namespace RoutineManager.MVVM.Service
     {
         public bool startProcess(string processName)
         {
-            try
-            {
-                Process.Start(new ProcessStartInfo($"{processName}") { UseShellExecute = true });
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-            
+            Process process = startProcessWithShell(processName);
+            return (process != null);
+        }
+
+        protected virtual Process startProcessWithShell(string processName)
+        {
+            return Process.Start(new ProcessStartInfo($"{processName}") { UseShellExecute = true });
         }
 
         //Returns true if the given string is a valid HTTP or HTTPS url.

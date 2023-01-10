@@ -12,20 +12,31 @@ namespace RoutineManager.MVVM.Service
     public class MonitorService : IMonitorService
     {
         private List<MonitorItem> _items = new();
-        
+        private List<Process> _processes = new();
         public bool grabProcess()
         {
-            throw new NotImplementedException();
+            Process process = new Process();
+            process.EnableRaisingEvents = true;
+            process.Exited += (sender, e) => getRuntime(sender);
+            _processes.Add(process);
+            return true;
         }
 
         public bool monitorProcess()
         {
+            //process.MainModule.FileName
             throw new NotImplementedException();
         }
 
-        public TimeSpan getRuntime()
+        public TimeSpan getRuntime(object sender)
         {
-            throw new NotImplementedException();
+            Process? process = sender as Process;
+
+            if (process == null)
+                return TimeSpan.Zero;
+
+            _processes.Remove(process);
+            return process.ExitTime - process.StartTime;
         }
 
         public bool writeListToFile(int numProcessesToSave)
