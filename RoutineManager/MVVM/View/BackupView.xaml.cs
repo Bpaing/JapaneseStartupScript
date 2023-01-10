@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace RoutineManager
+namespace RoutineManager.MVVM.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for BackupView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class BackupView : UserControl
     {
-        public MainWindow()
+        public BackupView()
         {
             InitializeComponent();
         }

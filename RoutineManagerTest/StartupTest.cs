@@ -4,6 +4,8 @@ namespace RoutineManagerTest
 {
     public class StartupTest
     {
+        private readonly StartupService _startupService = new StartupService();
+
         [Fact]
         public void isValidURL_WithValidHTTP_ShouldReturnTrue()
         {
@@ -11,7 +13,7 @@ namespace RoutineManagerTest
             String url = "http://www.testingmcafeesites.com/";
 
             //Act
-            bool result = StartupService.isValidURL(url);
+            bool result = _startupService.isValidURL(url);
 
             //Assert
             Assert.True(result);
@@ -24,7 +26,7 @@ namespace RoutineManagerTest
             String url = "https://www.google.com/";
 
             //Act
-            bool result = StartupService.isValidURL(url);
+            bool result = _startupService.isValidURL(url);
 
             //Assert
             Assert.True(result);
@@ -37,7 +39,7 @@ namespace RoutineManagerTest
             String url = "htts://www.gogle.cm/";
 
             //Act
-            bool result = StartupService.isValidURL(url);
+            bool result = _startupService.isValidURL(url);
 
             //Assert
             Assert.False(result);
@@ -50,7 +52,7 @@ namespace RoutineManagerTest
             String url = "C:\\Users";
 
             //Act
-            bool result = StartupService.isValidURL(url);
+            bool result = _startupService.isValidURL(url);
 
             //Assert
             Assert.False(result);
@@ -63,7 +65,7 @@ namespace RoutineManagerTest
             String filePath = "C:\\Users";
 
             //Act
-            bool result = StartupService.isValidFilePath(filePath);
+            bool result = _startupService.isValidFilePath(filePath);
 
             //Assert
             Assert.True(result);
@@ -76,7 +78,7 @@ namespace RoutineManagerTest
             String filePath = "C:/HelloWorld";
 
             //Act
-            bool result = StartupService.isValidFilePath(filePath);
+            bool result = _startupService.isValidFilePath(filePath);
 
             //Assert
             Assert.False(result);
@@ -89,7 +91,7 @@ namespace RoutineManagerTest
             String filePath = "https://www.google.com/";
 
             //Act
-            bool result = StartupService.isValidFilePath(filePath);
+            bool result = _startupService.isValidFilePath(filePath);
 
             //Assert
             Assert.False(result);

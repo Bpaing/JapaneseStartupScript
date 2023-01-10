@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RoutineManager.MVVM.Service;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,12 @@ using System.Threading.Tasks;
 
 namespace RoutineManager.MVVM.ViewModel
 {
-    internal class MonitorViewModel : ViewModelBase
+    public class MonitorViewModel : ViewModelBase
     {
+        private readonly IMonitorService? _monitorService;
+        public MonitorViewModel(IMonitorService monitorService)
+        {
+            _monitorService = monitorService;
+        }
     }
 }

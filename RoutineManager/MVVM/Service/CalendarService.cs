@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoutineManager.MVVM.Service
 {
-    public class CalendarService
+    public class CalendarService : ICalendarService
     {
     }
 }
