@@ -10,8 +10,8 @@ namespace RoutineManager.MVVM.Service
     {
 
 
-        bool grabProcess();
-        bool monitorProcess();
+        int grabCurrentlyRunningProcesses(string fileExtension);
+        bool monitorProcess(string fileExtension);
         TimeSpan getRuntime(object sender);
 
         bool isValidFilePath(string str);
