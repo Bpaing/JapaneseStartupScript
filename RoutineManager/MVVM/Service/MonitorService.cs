@@ -41,7 +41,9 @@ namespace RoutineManager.MVVM.Service
             using (ManagementObjectCollection objects = searcher.Get())
             {
                 var cmdArguments = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
-                return regex.Split(cmdArguments);
+                if (cmdArguments != null)
+                    return regex.Split(cmdArguments);
+                return new string[0];
             }
         }
 
