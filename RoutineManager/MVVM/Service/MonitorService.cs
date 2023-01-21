@@ -16,7 +16,7 @@ namespace RoutineManager.MVVM.Service
     public class MonitorService : IMonitorService
     {
         private List<MonitorItem> _items = new();
-        private List<Process> _processes = new();
+
         public int grabCurrentlyRunningProcesses(string fileExtension)
         {
             Process[] allRunningProcesses = Process.GetProcesses();
@@ -31,8 +31,35 @@ namespace RoutineManager.MVVM.Service
             return processesGrabbed;
         }
 
+        public int listenForNewProcesses(string fileExtension)
+        {
+            //process.MainModule.FileName
+            //https://stackoverflow.com/questions/6575117/how-to-wait-for-process-that-will-be-started
+            throw new NotImplementedException();
+        }
+
+        public TimeSpan getRuntime(Process process)
+        {
+            if (process == null)
+                return TimeSpan.Zero;
+
+            return process.ExitTime - process.StartTime;
+        }
+
+        public bool writeListToFile()
+        {
+            throw new NotImplementedException();
+        }
+
+        /*
+         * https://learn.microsoft.com/en-us/dotnet/api/system.management.managementeventwatcher?view=dotnet-plat-ext-7.0
+         * https://learn.microsoft.com/en-us/dotnet/api/system.management.managementeventwatcher.-ctor?view=dotnet-plat-ext-7.0#system-management-managementeventwatcher-ctor
+         */
+
+
         private String[] getCommandLineArgsFromProcess(Process process)
         {
+            //Update this to split more efficient arrays
             Regex regex = new Regex("\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)'|[^\\s]+");
 
             using (ManagementObjectSearcher searcher =
@@ -43,56 +70,32 @@ namespace RoutineManager.MVVM.Service
                 var cmdArguments = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
                 if (cmdArguments != null)
                     return regex.Split(cmdArguments);
-                return new string[0];
             }
+
+            return Array.Empty<string>();
         }
 
-        private int parseArguments(Process process, String[] formattedArguments, String fileExtension)
+        private int parseArguments(Process process, string[] arguments, string fileExtension)
         {
-            foreach (var argument in formattedArguments)
+            foreach (var arg in arguments)
             {
-                argument.Trim();
-                if (!argument.Equals(" ") && !argument.Equals(string.Empty) && argument.Contains(fileExtension))
+                arg.Trim();
+                bool emptyArgument = arg.Equals(" ") || arg.Equals(string.Empty);
+                if (!emptyArgument && arg.Contains(fileExtension))
                 {
                     process.EnableRaisingEvents = true;
-                    process.Exited += (sender, e) => getRuntime(sender);
-                    _processes.Add(process);
+                    process.Exited += (sender, e) => getRuntime(sender as Process);
+
+                    MonitorItem? item = _items.Find(item => item.Name == arg);
+                    if (item == null)
+                        _items.Add(new MonitorItem { Name = arg, Runtime = TimeSpan.Zero, AssociatedProcess = process });
+                    else
+                        item.AssociatedProcess = process;
+
                     return 1;
                 }
             }
             return 0;
         }
-
-        public bool monitorProcess()
-        {
-            //process.MainModule.FileName
-            throw new NotImplementedException();
-        }
-
-        public TimeSpan getRuntime(object sender)
-        {
-            Process? process = sender as Process;
-
-            if (process == null)
-                return TimeSpan.Zero;
-
-            _processes.Remove(process);
-            return process.ExitTime - process.StartTime;
-        }
-
-        public bool writeListToFile(int numProcessesToSave)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool isValidFilePath(string str)
-        {
-            return Directory.Exists(str);
-        }
-
-        /*
-         * https://learn.microsoft.com/en-us/dotnet/api/system.management.managementeventwatcher?view=dotnet-plat-ext-7.0
-         * https://learn.microsoft.com/en-us/dotnet/api/system.management.managementeventwatcher.-ctor?view=dotnet-plat-ext-7.0#system-management-managementeventwatcher-ctor
-         */
     }
 }
