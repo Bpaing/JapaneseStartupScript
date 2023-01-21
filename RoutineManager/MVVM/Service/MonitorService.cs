@@ -43,7 +43,15 @@ namespace RoutineManager.MVVM.Service
             if (process == null)
                 return TimeSpan.Zero;
 
-            return process.ExitTime - process.StartTime;
+            TimeSpan runtime = process.ExitTime - process.StartTime;
+            var item = _items.FirstOrDefault(item => item.AssociatedProcess == process);
+            if (item != null)
+            {
+                item.Runtime += runtime;
+                item.AssociatedProcess = null;
+            }
+
+            return runtime;
         }
 
         public bool writeListToFile()
@@ -86,7 +94,7 @@ namespace RoutineManager.MVVM.Service
                     process.EnableRaisingEvents = true;
                     process.Exited += (sender, e) => getRuntime(sender as Process);
 
-                    MonitorItem? item = _items.Find(item => item.Name == arg);
+                    MonitorItem? item = _items.FirstOrDefault(item => item.Name == arg);
                     if (item == null)
                         _items.Add(new MonitorItem { Name = arg, Runtime = TimeSpan.Zero, AssociatedProcess = process });
                     else
