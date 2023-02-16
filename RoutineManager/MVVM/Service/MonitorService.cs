@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Management;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
+using System.Threading;
 
 namespace RoutineManager.MVVM.Service
 {
@@ -24,18 +25,45 @@ namespace RoutineManager.MVVM.Service
 
             foreach (var process in allRunningProcesses)
             {
-                String[] formattedArguments = getCommandLineArgsFromProcess(process);
+                string[] formattedArguments = getCommandLineArgsFromProcess(process);
                 processesGrabbed += parseArguments(process, formattedArguments, fileExtension);
             }
 
             return processesGrabbed;
         }
 
+        //https://stackoverflow.com/questions/12159989/asynchronous-wmi-event-handling-in-net
+        //For async, use Start() instead of WaitForNextEvent(), add event handler method to EventArrived subscriber.
         public int listenForNewProcesses(string fileExtension)
         {
-            //process.MainModule.FileName
-            //https://stackoverflow.com/questions/6575117/how-to-wait-for-process-that-will-be-started
-            throw new NotImplementedException();
+            // Create event query to be notified within 1 second of
+            // a change in a service
+            WqlEventQuery query =
+                new WqlEventQuery("__InstanceCreationEvent",
+                new TimeSpan(0, 0, 1),
+                "TargetInstance isa \"Win32_Process\"");
+
+            // Initialize an event watcher and subscribe to events
+            // that match this query
+            ManagementEventWatcher watcher = new ManagementEventWatcher(query);
+            watcher.EventArrived += new EventArrivedEventHandler(this.verifyProcess);
+            watcher.Start();
+            Console.WriteLine("Listening for new Processes...");
+            Thread.Sleep(20000);
+            Console.WriteLine("Stopping...");
+            watcher.Stop();
+            return 0;
+        }
+
+        private void verifyProcess(object sender, EventArrivedEventArgs e)
+        {
+            ManagementBaseObject targetInstance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
+            Console.WriteLine(targetInstance);
+
+            bool success = int.TryParse(targetInstance["ProcessId"]?.ToString(), out int pid);
+            Process process = Process.GetProcessById(pid);
+            String[] args = splitArguments(targetInstance["CommandLine"]?.ToString());
+
         }
 
         public TimeSpan getRuntime(Process process)
@@ -76,11 +104,17 @@ namespace RoutineManager.MVVM.Service
             using (ManagementObjectCollection objects = searcher.Get())
             {
                 var cmdArguments = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
-                if (cmdArguments != null)
-                    return regex.Split(cmdArguments);
+                return splitArguments(cmdArguments);
             }
+        }
 
-            return Array.Empty<string>();
+        private String[] splitArguments(String commandLineArgs)
+        {
+            //Update this to split more efficient arrays
+            Regex regex = new Regex("\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)'|[^\\s]+");
+            if (commandLineArgs != null)
+                return regex.Split(commandLineArgs);
+            return new string[0];
         }
 
         private int parseArguments(Process process, string[] arguments, string fileExtension)
@@ -105,5 +139,6 @@ namespace RoutineManager.MVVM.Service
             }
             return 0;
         }
+
     }
 }
