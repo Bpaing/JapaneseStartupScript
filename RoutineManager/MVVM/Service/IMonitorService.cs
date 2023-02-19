@@ -10,9 +10,8 @@ namespace RoutineManager.MVVM.Service
     public interface IMonitorService
     {
 
-        int grabCurrentlyRunningProcesses(string fileExtension);
-        int listenForNewProcesses(string fileExtension);
-        TimeSpan getRuntime(Process process);
+        int grabCurrentlyRunningProcesses();
+        int listenForNewProcesses();
         bool writeListToFile();
 
         /*
