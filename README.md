@@ -11,7 +11,7 @@ After that I want to follow through with adding additional features.
 Here are the current feature plans:
 1. Startup - Open browser links and processes (from original program)
 2. Monitor - Track the runtimes of specified file extensions (from original program, but generic to work with any file extension)
-3. Backup - Primarily an interface to specify commands for [restic](https://restic.net/) and [rclone](https://rclone.org/) which I have been using for my cloud backups.
+~~3. Backup - Primarily an interface to specify commands for [restic](https://restic.net/) and [rclone](https://rclone.org/) which I have been using for my cloud backups.~~ **2/28/23 Removing this feature since other GUI programs exist for these tools.**
 4. Calendar - Display visual data from Monitor feature
 
 
