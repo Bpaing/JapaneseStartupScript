@@ -19,10 +19,10 @@ namespace RoutineManager.MVVM.ViewModel
         public MainViewModel()
         {
    
-            _otherViewModels.Add(App.Current.Services.GetService<StartupViewModel>());
-            _otherViewModels.Add(App.Current.Services.GetService<MonitorViewModel>());
-            _otherViewModels.Add(App.Current.Services.GetService<BackupViewModel>());
-            _otherViewModels.Add(App.Current.Services.GetService<CalendarViewModel>());
+            _otherViewModels.Add(App.Current._serviceProvider.GetService<StartupViewModel>());
+            _otherViewModels.Add(App.Current._serviceProvider.GetService<MonitorViewModel>());
+            _otherViewModels.Add(App.Current._serviceProvider.GetService<BackupViewModel>());
+            _otherViewModels.Add(App.Current._serviceProvider.GetService<CalendarViewModel>());
 
             CurrentView = _otherViewModels[0];
         }

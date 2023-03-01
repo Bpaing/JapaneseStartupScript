@@ -2,14 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using System.Management;
 using System.Text.RegularExpressions;
-using System.Security.Cryptography;
 using System.Threading;
 
 namespace RoutineManager.MVVM.Service
@@ -55,9 +50,11 @@ namespace RoutineManager.MVVM.Service
                 string[] arguments = splitArguments(targetInstance["CommandLine"]?.ToString());
                 processesGrabbed += parseArguments(process, arguments);
             });
+
             watcher.Start();
 
-            Thread.Sleep(20000);
+            //wait for button click to stop monitoring
+            Thread.Sleep(60000);
 
             watcher.Stop();
 
@@ -71,8 +68,8 @@ namespace RoutineManager.MVVM.Service
 
             using (ManagementObjectCollection objects = searcher.Get())
             {
-                var commandArguments = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
-                return splitArguments(commandArguments);
+                var arguments = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
+                return splitArguments(arguments);
             }
         }
 
