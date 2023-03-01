@@ -10,15 +10,11 @@
             <DataTemplate DataType="{x:Type viewModel:StartupViewModel}">
                 <view:StartupView/>
             </DataTemplate>
-            
+
             <DataTemplate DataType="{x:Type viewModel:MonitorViewModel}">
                 <view:MonitorView/>
             </DataTemplate>
-            
-            <DataTemplate DataType="{x:Type viewModel:BackupViewModel}">
-                <view:BackupView/>
-            </DataTemplate>
-            
+
             <DataTemplate DataType="{x:Type viewModel:CalendarViewModel}">
                 <view:CalendarView/>
             </DataTemplate>

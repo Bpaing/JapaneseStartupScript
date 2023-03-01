@@ -44,14 +44,12 @@ namespace RoutineManager
             //Services
             services.AddSingleton<IStartupService, StartupService>();
             services.AddSingleton<IMonitorService, MonitorService>();
-            services.AddSingleton<IBackupService, BackupService>();
             services.AddSingleton<ICalendarService, CalendarService>();
 
             //ViewModels
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<StartupViewModel>();
             services.AddSingleton<MonitorViewModel>();
-            services.AddSingleton<BackupViewModel>();
             services.AddSingleton<CalendarViewModel>();
 
             return services.BuildServiceProvider();

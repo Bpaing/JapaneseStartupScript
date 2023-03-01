@@ -21,7 +21,6 @@ namespace RoutineManager.MVVM.ViewModel
    
             _otherViewModels.Add(App.Current._serviceProvider.GetService<StartupViewModel>());
             _otherViewModels.Add(App.Current._serviceProvider.GetService<MonitorViewModel>());
-            _otherViewModels.Add(App.Current._serviceProvider.GetService<BackupViewModel>());
             _otherViewModels.Add(App.Current._serviceProvider.GetService<CalendarViewModel>());
 
             CurrentView = _otherViewModels[0];
@@ -40,15 +39,9 @@ namespace RoutineManager.MVVM.ViewModel
         }
 
         [RelayCommand]
-        public void DisplayBackup()
-        {
-            CurrentView = _otherViewModels[2];
-        }
-
-        [RelayCommand]
         public void DisplayCalendar()
         {
-            CurrentView = _otherViewModels[3];
+            CurrentView = _otherViewModels[2];
         }
 
     }

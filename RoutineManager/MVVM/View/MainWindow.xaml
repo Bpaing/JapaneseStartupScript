@@ -48,8 +48,6 @@
                 <Button Background="#272530" Foreground="White" 
                         Command="{Binding DisplayMonitorCommand}">Monitor</Button>
                 <Button Background="#272530" Foreground="White"
-                        Command="{Binding DisplayBackupCommand}">Backup</Button>
-                <Button Background="#272530" Foreground="White"
                         Command="{Binding DisplayCalendarCommand}">Calendar</Button>
             </UniformGrid>
 
