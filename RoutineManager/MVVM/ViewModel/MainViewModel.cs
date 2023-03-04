@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using RoutineManager.MVVM.Service;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -11,37 +12,30 @@ namespace RoutineManager.MVVM.ViewModel
     public partial class MainViewModel : ViewModelBase
     {
         [ObservableProperty]
-        private ViewModelBase? _currentView;
-
-        private ObservableCollection<ViewModelBase> _otherViewModels = new();
+        private INavigationService? _navigationService;
 
 
-        public MainViewModel()
+        public MainViewModel(INavigationService navigationService)
         {
-   
-            _otherViewModels.Add(App.Current._serviceProvider.GetService<StartupViewModel>());
-            _otherViewModels.Add(App.Current._serviceProvider.GetService<MonitorViewModel>());
-            _otherViewModels.Add(App.Current._serviceProvider.GetService<CalendarViewModel>());
-
-            CurrentView = _otherViewModels[0];
+            NavigationService = navigationService;
         }
 
         [RelayCommand]
-        public void DisplayStartup()
+        public void NavigateStartup()
         {
-            CurrentView = _otherViewModels[0];
+            NavigationService?.NavigateTo<StartupViewModel>();
         }
 
         [RelayCommand]
-        public void DisplayMonitor()
+        public void NavigateMonitor()
         {
-            CurrentView = _otherViewModels[1];
+            NavigationService?.NavigateTo<MonitorViewModel>();
         }
 
         [RelayCommand]
-        public void DisplayCalendar()
+        public void NavigateCalendar()
         {
-            CurrentView = _otherViewModels[2];
+            NavigationService?.NavigateTo<CalendarViewModel>();
         }
 
     }

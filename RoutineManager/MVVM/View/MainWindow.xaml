@@ -13,9 +13,6 @@
         Background="Transparent"
         AllowsTransparency="True">
 
-    <Window.DataContext>
-        <viewModel:MainViewModel />
-    </Window.DataContext>
     <Border Background="#272537"
             CornerRadius="10">
         <Grid>
@@ -44,17 +41,17 @@
                          Grid.Row="1"
                          Grid.Column="0">
                 <Button Background="#272530" Foreground="White"
-                        Command="{Binding DisplayStartupCommand}">Startup</Button>
+                        Command="{Binding NavigateStartupCommand}">Startup</Button>
                 <Button Background="#272530" Foreground="White" 
-                        Command="{Binding DisplayMonitorCommand}">Monitor</Button>
+                        Command="{Binding NavigateMonitorCommand}">Monitor</Button>
                 <Button Background="#272530" Foreground="White"
-                        Command="{Binding DisplayCalendarCommand}">Calendar</Button>
+                        Command="{Binding NavigateCalendarCommand}">Calendar</Button>
             </UniformGrid>
 
             <ContentControl Grid.Row="1"
                             Grid.Column="1"
                             Margin="10"
-                            Content="{Binding CurrentView}"/>
+                            Content="{Binding NavigationService.CurrentView}"/>
 
 
 

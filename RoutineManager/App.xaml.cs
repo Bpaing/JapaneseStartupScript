@@ -18,7 +18,7 @@ namespace RoutineManager
     /// </summary>
     public partial class App : Application
     {
-        public readonly IServiceProvider? _serviceProvider;
+        private readonly IServiceProvider? _serviceProvider;
 
         public App()
         {
@@ -27,8 +27,8 @@ namespace RoutineManager
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            MainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-            MainWindow.Show();
+            var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+            mainWindow.Show();
             base.OnStartup(e);
         }
 
@@ -46,6 +46,10 @@ namespace RoutineManager
             services.AddSingleton<IMonitorService, MonitorService>();
             services.AddSingleton<ICalendarService, CalendarService>();
 
+            services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<Func<Type, ViewModelBase>>
+                (serviceProvider => viewModelType => (ViewModelBase)serviceProvider.GetRequiredService(viewModelType));
+
             //ViewModels
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<StartupViewModel>();
@@ -54,9 +58,6 @@ namespace RoutineManager
 
             return services.BuildServiceProvider();
         }
-
-  
-        public new static App Current => (App)Application.Current;
 
     }
 }
