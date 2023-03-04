@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,15 +10,9 @@ namespace RoutineManager.MVVM.Service
     public interface IMonitorService
     {
 
-
-        bool grabProcess();
-        bool monitorProcess();
-        TimeSpan getRuntime(object sender);
-
-        bool isValidFilePath(string str);
-        bool writeListToFile(int numProcessesToSave);
-        
-
+        int grabCurrentlyRunningProcesses();
+        int listenForNewProcesses();
+        bool writeListToFile();
 
         /*
          * Process represents a file with the specified extension.

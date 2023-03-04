@@ -2,84 +2,135 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Management;
+using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace RoutineManager.MVVM.Service
 {
     public class MonitorService : IMonitorService
     {
         private List<MonitorItem> _items = new();
-        private List<Process> _processes = new();
-        public bool grabProcess()
+        private HashSet<string> _fileExtensionsToMonitor = new();
+
+        public int grabCurrentlyRunningProcesses()
         {
-            Process process = new Process();
-            process.EnableRaisingEvents = true;
-            process.Exited += (sender, e) => getRuntime(sender);
-            _processes.Add(process);
-            return true;
+            Process[] allRunningProcesses = Process.GetProcesses();
+            int processesGrabbed = 0;
+
+            foreach (var process in allRunningProcesses)
+            {
+                string[] arguments = getArgumentsFromProcess(process);
+                processesGrabbed += parseArguments(process, arguments);
+            }
+
+            return processesGrabbed;
         }
 
-        public bool monitorProcess()
+
+        public int listenForNewProcesses()
         {
-            //process.MainModule.FileName
-            throw new NotImplementedException();
+            int processesGrabbed = 0;
+
+            WqlEventQuery query =
+                new WqlEventQuery("__InstanceCreationEvent",
+                new TimeSpan(0, 0, 1),
+                "TargetInstance isa \"Win32_Process\"");
+
+            ManagementEventWatcher watcher = new ManagementEventWatcher(query);
+            watcher.EventArrived += new EventArrivedEventHandler((sender, e) =>
+            {
+                ManagementBaseObject targetInstance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
+                Console.WriteLine(targetInstance);
+
+                bool success = int.TryParse(targetInstance["ProcessId"]?.ToString(), out int pid);
+                Process process = Process.GetProcessById(pid);
+
+                string[] arguments = splitArguments(targetInstance["CommandLine"]?.ToString());
+                processesGrabbed += parseArguments(process, arguments);
+            });
+
+            watcher.Start();
+
+            //wait for button click to stop monitoring
+            Thread.Sleep(60000);
+
+            watcher.Stop();
+
+            return processesGrabbed;
         }
 
-        public TimeSpan getRuntime(object sender)
+        private String[] getArgumentsFromProcess(Process process)
         {
-            Process? process = sender as Process;
+            using (ManagementObjectSearcher searcher =
+                    new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + process.Id))
 
+            using (ManagementObjectCollection objects = searcher.Get())
+            {
+                var arguments = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
+                return splitArguments(arguments);
+            }
+        }
+
+        private String[] splitArguments(String arguments)
+        {
+            //Update this to split more efficient arrays
+            Regex regex = new Regex("\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)'|[^\\s]+");
+            if (arguments != null)
+                return regex.Split(arguments);
+            return new string[0];
+        }
+
+        private int parseArguments(Process process, string[] arguments)
+        {
+            foreach (var arg in arguments)
+            {
+                arg.Trim();
+                bool emptyArgument = arg.Equals(" ") || arg.Equals(string.Empty);
+                bool validFileExtension = _fileExtensionsToMonitor.Contains(arg);
+
+                if (!emptyArgument && validFileExtension)
+                {
+                    process.EnableRaisingEvents = true;
+                    process.Exited += (sender, e) => getRuntime(sender as Process);
+
+                    MonitorItem? item = _items.FirstOrDefault(item => item.Name == arg);
+                    if (item == null)
+                        _items.Add(new MonitorItem { Name = arg, Runtime = TimeSpan.Zero, AssociatedProcess = process });
+                    else
+                        item.AssociatedProcess = process;
+
+                    return 1;
+                }
+            }
+            return 0;
+        }
+
+
+        private TimeSpan getRuntime(Process process)
+        {
             if (process == null)
                 return TimeSpan.Zero;
 
-            _processes.Remove(process);
-            return process.ExitTime - process.StartTime;
+            TimeSpan runtime = process.ExitTime - process.StartTime;
+            var item = _items.FirstOrDefault(item => item.AssociatedProcess == process);
+            if (item != null)
+            {
+                item.Runtime += runtime;
+                item.AssociatedProcess = null;
+            }
+
+            return runtime;
         }
 
-        public bool writeListToFile(int numProcessesToSave)
+
+        public bool writeListToFile()
         {
             throw new NotImplementedException();
         }
 
-        public bool isValidFilePath(string str)
-        {
-            return Directory.Exists(str);
-        }
-
-        /*
-         * https://learn.microsoft.com/en-us/dotnet/api/system.management.managementeventwatcher?view=dotnet-plat-ext-7.0
-         * https://learn.microsoft.com/en-us/dotnet/api/system.management.managementeventwatcher.-ctor?view=dotnet-plat-ext-7.0#system-management-managementeventwatcher-ctor
-            using System.Diagnostics;
-            using System.Management;
-            using System.Text.RegularExpressions;
-
-            Process[] pp = Process.GetProcesses();
-            Regex regex = new Regex("\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)'|[^\\s]+");
-            foreach (var process in pp)
-            {
-
-                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + process.Id))
-                using (ManagementObjectCollection objects = searcher.Get())
-                {
-                    var cmdArguments = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
-                    if (cmdArguments != null)
-                    {
-                        var fileName = regex.Split(cmdArguments);
-                        foreach (var s in fileName)
-                        {
-                            s.Trim();
-                            if (!s.Equals(" ") && !s.Equals(string.Empty) && s.Contains(".cbz"))
-                            {
-                                Console.WriteLine(s);
-                            }
-               
-                        }
-                    }
-                }
-            }
-         */
+        public void addFileExtension(string fileExtension) { _fileExtensionsToMonitor.Add(fileExtension);}
+        public void removeFileExtension(string fileExtension) { _fileExtensionsToMonitor.Remove(fileExtension); }
     }
 }
