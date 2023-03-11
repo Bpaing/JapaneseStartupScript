@@ -27,8 +27,8 @@ namespace RoutineManager
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-            mainWindow.Show();
+            MainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+            MainWindow.Show();
             base.OnStartup(e);
         }
 
@@ -48,7 +48,7 @@ namespace RoutineManager
 
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddSingleton<Func<Type, ViewModelBase>>
-                (serviceProvider => viewModelType => (ViewModelBase)serviceProvider.GetRequiredService(viewModelType));
+                (provider => viewModelType => (ViewModelBase)provider.GetRequiredService(viewModelType));
 
             //ViewModels
             services.AddSingleton<MainViewModel>();
