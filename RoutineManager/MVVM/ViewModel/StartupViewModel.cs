@@ -60,11 +60,28 @@ namespace RoutineManager.MVVM.ViewModel
 
         //Adds an input row.
         [RelayCommand]
-        public void AddItem() { this.ItemList.Add(new StartupItem()); }
+        public void AddItem(string type) 
+        { 
+            switch (type)
+            {
+                case "File":
+                    this.FileList.Add(new StartupItem());
+                    break;
+                case "URL":
+                    this.UrlList.Add(new StartupItem());
+                    break;
+            }
+        }
 
         //Deletes an input row.
         [RelayCommand]
-        public void DeleteItem(StartupItem selectedItem) { this.ItemList.Remove(selectedItem); }
+        public void DeleteItem(StartupItem selectedItem) 
+        {
+            if (this.FileList.Contains(selectedItem))
+                this.FileList.Remove(selectedItem);
+            else
+                this.UrlList.Remove(selectedItem);
+        }
 
         [RelayCommand]
         public void EditAlias(StartupItem selectedItem)
