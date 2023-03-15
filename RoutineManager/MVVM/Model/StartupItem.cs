@@ -12,7 +12,6 @@ namespace RoutineManager.MVVM.Model
     {
         public string? Alias { get; set; }
 
-
         //Represents the absolute path of a file or a valid URL.
         //Only visible when editing a StartupItem on the application.
         public string? Path { get; set; }

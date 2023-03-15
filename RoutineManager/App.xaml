@@ -5,18 +5,18 @@
              xmlns:viewModel="clr-namespace:RoutineManager.MVVM.ViewModel"
              xmlns:view="clr-namespace:RoutineManager.MVVM.View">
     <Application.Resources>
-  
-        <DataTemplate DataType="{x:Type viewModel:StartupViewModel}">
-            <view:StartupView/>
-        </DataTemplate>
+        <ResourceDictionary>
+            <DataTemplate DataType="{x:Type viewModel:StartupViewModel}">
+                <view:StartupView/>
+            </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewModel:MonitorViewModel}">
-            <view:MonitorView/>
-        </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:MonitorViewModel}">
+                <view:MonitorView/>
+            </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewModel:CalendarViewModel}">
-            <view:CalendarView/>
-        </DataTemplate>
-
+            <DataTemplate DataType="{x:Type viewModel:CalendarViewModel}">
+                <view:CalendarView/>
+            </DataTemplate>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

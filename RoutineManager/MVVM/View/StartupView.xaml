@@ -6,27 +6,53 @@
              xmlns:local="clr-namespace:RoutineManager.MVVM.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <StackPanel>
-        <TextBlock Foreground="White"
-                   FontSize="50"
-                   Text="STARTUP">
-        </TextBlock>
-        <Button Background="#272530" Foreground="White"
-                        Command="{Binding AddItemCommand}">Add Item</Button>
-        <TextBlock Background="#272530" Foreground="White" Text="{Binding ItemList.Count}"></TextBlock>
-        <ListBox x:Name="startupList" ItemsSource="{Binding ItemList}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Alias}" ></TextBlock>
-                        <Button Command="{Binding Path=DataContext.DeleteItemCommand, 
+    <UserControl.Resources>
+    </UserControl.Resources>
+    <Grid>
+        <StackPanel>
+            <TextBlock Foreground="White" FontSize="50" Text="STARTUP" />
+            <Button Background="#272530" Foreground="White" Content="Add Item" Command="{Binding AddItemCommand}"/>
+            <TextBlock Background="#272530" Foreground="White" Text="Files/Processes"/>
+            
+            <ItemsControl ItemsSource="{Binding ItemList}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                     Background="#FF272530" 
+                     BorderThickness="0,0,0,0" 
+                     Foreground="White" 
+                     FontFamily="Arial">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding Alias}" Background="Black" Grid.Column="0"/>
+                            <Button Grid.Column="1"
+                                    Command="{Binding Path=DataContext.ChooseFileCommand, 
+                                    RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}"
+                                Content ="browse"
+                                />
+                            <Button Grid.Column="2"
+                                    Command="{Binding Path=DataContext.DeleteItemCommand, 
                                     RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                 CommandParameter="{Binding}"
                                 Content ="[x]"
                                 />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="3"></UniformGrid>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+            
+            <TextBlock Background="#272530" Foreground="White" Text="URLs"/>
+            
+        </StackPanel>
+    </Grid>
 </UserControl>
