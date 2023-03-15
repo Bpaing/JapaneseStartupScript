@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
 using RoutineManager.MVVM.Model;
 using RoutineManager.MVVM.Service;
 using System;
@@ -7,6 +8,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,32 +57,26 @@ namespace RoutineManager.MVVM.ViewModel
 
 
         //Adds an input row.
-        //https://stackoverflow.com/questions/24960476/dynamically-adding-textbox-using-a-button-within-mvvm-framework
         [RelayCommand]
-        public void AddItem()
-        {
-            this.ItemList.Add(new StartupItem() { Alias="Test", Path="TestPath"});
-            this.ItemList.Add(new StartupItem() { Alias = "Test2", Path = "TestPath2" });
-        }
+        public void AddItem() { this.ItemList.Add(new StartupItem()); }
 
         //Deletes an input row.
         [RelayCommand]
-        public void DeleteItem(StartupItem selectedItem)
-        {
-            this.ItemList.Remove(selectedItem);
-        }
+        public void DeleteItem(StartupItem selectedItem) { this.ItemList.Remove(selectedItem); }
 
         [RelayCommand]
-        public void EditItem(StartupItem selectedItem)
+        public void EditAlias(StartupItem selectedItem)
         {
 
         }
 
         //https://stackoverflow.com/questions/1619505/wpf-openfiledialog-with-the-mvvm-pattern
         [RelayCommand]
-        public void ChooseFile()
+        public void ChooseFile(StartupItem selectedItem)
         {
-
+            OpenFileDialog dlg = new OpenFileDialog();
+            if (dlg.ShowDialog() == true)
+                selectedItem.Path = dlg.FileName;
         }
 
         //Loads data saved by Monitor service into MonitorData.
