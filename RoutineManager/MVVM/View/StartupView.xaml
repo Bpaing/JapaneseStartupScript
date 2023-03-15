@@ -11,10 +11,19 @@
     <Grid>
         <StackPanel>
             <TextBlock Foreground="White" FontSize="50" Text="STARTUP" />
-            <Button Background="#272530" Foreground="White" Content="Add Item" Command="{Binding AddItemCommand}"/>
+            <Button Background="#272530" 
+                    Foreground="White" 
+                    Content="Add Item" 
+                    Command="{Binding AddItemCommand}"
+                    CommandParameter="{Binding ElementName=StartupType, Path=Text}"/>
+            <ComboBox Name="StartupType">
+                <ComboBoxItem Content="File" />
+                <ComboBoxItem Content="URL" />
+            </ComboBox>
+
+
             <TextBlock Background="#272530" Foreground="White" Text="Files/Processes"/>
-            
-            <ItemsControl ItemsSource="{Binding ItemList}"
+            <ItemsControl ItemsSource="{Binding FileList}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
                      Background="#FF272530" 
                      BorderThickness="0,0,0,0" 
@@ -30,7 +39,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBox Text="{Binding Alias}" Background="Black" Grid.Column="0"/>
                             <Button Grid.Column="1"
-                                    Command="{Binding Path=DataContext.ChooseFileCommand, 
+                                    Command="{Binding Path=DataContext.EditPathCommand, 
                                     RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                 CommandParameter="{Binding}"
                                 Content ="browse"
@@ -52,7 +61,42 @@
             </ItemsControl>
             
             <TextBlock Background="#272530" Foreground="White" Text="URLs"/>
-            
+            <ItemsControl ItemsSource="{Binding UrlList}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                     Background="#FF272530" 
+                     BorderThickness="0,0,0,0" 
+                     Foreground="White" 
+                     FontFamily="Arial">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding Alias}" Background="Black" Grid.Column="0"/>
+                            <Button Grid.Column="1"
+                                    Command="{Binding Path=DataContext.EditPathCommand, 
+                                    RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}"
+                                Content ="browse"
+                                />
+                            <Button Grid.Column="2"
+                                    Command="{Binding Path=DataContext.DeleteItemCommand, 
+                                    RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}"
+                                Content ="[x]"
+                                />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="3"></UniformGrid>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
         </StackPanel>
     </Grid>
 </UserControl>

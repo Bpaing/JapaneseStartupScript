@@ -40,12 +40,14 @@ namespace RoutineManager.MVVM.ViewModel
     public partial class StartupViewModel : ViewModelBase
     {
         private readonly IStartupService? _startupService;
-        public ObservableCollection<StartupItem> ItemList { get; set; }
+        public ObservableCollection<StartupItem> FileList { get; set; }
+        public ObservableCollection<StartupItem> UrlList { get; set; }
 
         public StartupViewModel(IStartupService startupService)
         {
             _startupService = startupService;
-            ItemList = new();
+            FileList = new();
+            UrlList = new();
         }
 
         //Validate each url/filepath. If all pass, start processes and save to settings for later.
