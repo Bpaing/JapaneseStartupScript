@@ -7,96 +7,46 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
+        <DataTemplate x:Key="StartupItemTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{Binding Alias}" ToolTip="{Binding Path}" Grid.Column="0"/>
+                <Button Grid.Column="1" Command="{Binding Path=DataContext.EditPathCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" Content ="browse"/>
+                <Button Grid.Column="2" Command="{Binding Path=DataContext.DeleteItemCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding }" Content ="[x]"/>
+            </Grid>
+        </DataTemplate>
+        <ItemsPanelTemplate x:Key="StartupItemPanelTemplate">
+            <UniformGrid Columns="3"></UniformGrid>
+        </ItemsPanelTemplate>
     </UserControl.Resources>
-    <Grid>
-        <StackPanel>
-            <TextBlock Foreground="White" FontSize="50" Text="STARTUP" />
+
+    <StackPanel x:Name="StartupContent">
+        <TextBlock Foreground="White" FontSize="50" Text="STARTUP" />
+        <UniformGrid Rows="1">
+            <DockPanel HorizontalAlignment="Stretch" LastChildFill="True" Margin="10 0 10 0">
+                <Button MinWidth="25" DockPanel.Dock="Right" Background="#272530" Foreground="White" Content="+" Command="{Binding AddItemCommand}" CommandParameter="{Binding ElementName=StartupType, Path=Text}"/>
+                <ComboBox Name="StartupType" DockPanel.Dock="Left">
+                    <ComboBoxItem Content="File" />
+                    <ComboBoxItem Content="URL" />
+                </ComboBox>
+            </DockPanel>
             <Button Background="#272530" 
-                    Foreground="White" 
-                    Content="Add Item" 
-                    Command="{Binding AddItemCommand}"
-                    CommandParameter="{Binding ElementName=StartupType, Path=Text}"/>
-            <ComboBox Name="StartupType">
-                <ComboBoxItem Content="File" />
-                <ComboBoxItem Content="URL" />
-            </ComboBox>
+                    Foreground="White"
+                    Margin="0 0 10 0"
+                    Content="Load From Monitor" 
+                    Command="{Binding LoadMonitorDataCommand}"/>
+        </UniformGrid>
 
+        <TextBlock Background="#272530" Foreground="White" Margin="10 10 10 0" Text="Files/Processes"/>
+        <ItemsControl ItemsSource="{Binding FileList}" ItemTemplate="{StaticResource StartupItemTemplate}" ItemsPanel="{StaticResource StartupItemPanelTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="#FF272530" BorderThickness="0,0,0,0" Foreground="White" FontFamily="Arial">
+        </ItemsControl>
 
-            <TextBlock Background="#272530" Foreground="White" Text="Files/Processes"/>
-            <ItemsControl ItemsSource="{Binding FileList}"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                     Background="#FF272530" 
-                     BorderThickness="0,0,0,0" 
-                     Foreground="White" 
-                     FontFamily="Arial">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox Text="{Binding Alias}" Background="Black" Grid.Column="0"/>
-                            <Button Grid.Column="1"
-                                    Command="{Binding Path=DataContext.EditPathCommand, 
-                                    RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                CommandParameter="{Binding}"
-                                Content ="browse"
-                                />
-                            <Button Grid.Column="2"
-                                    Command="{Binding Path=DataContext.DeleteItemCommand, 
-                                    RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                CommandParameter="{Binding}"
-                                Content ="[x]"
-                                />
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="3"></UniformGrid>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-            
-            <TextBlock Background="#272530" Foreground="White" Text="URLs"/>
-            <ItemsControl ItemsSource="{Binding UrlList}"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                     Background="#FF272530" 
-                     BorderThickness="0,0,0,0" 
-                     Foreground="White" 
-                     FontFamily="Arial">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox Text="{Binding Alias}" Background="Black" Grid.Column="0"/>
-                            <Button Grid.Column="1"
-                                    Command="{Binding Path=DataContext.EditPathCommand, 
-                                    RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                CommandParameter="{Binding}"
-                                Content ="browse"
-                                />
-                            <Button Grid.Column="2"
-                                    Command="{Binding Path=DataContext.DeleteItemCommand, 
-                                    RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                CommandParameter="{Binding}"
-                                Content ="[x]"
-                                />
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="3"></UniformGrid>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-        </StackPanel>
-    </Grid>
+        <TextBlock Background="#272530" Foreground="White" Margin="10 10 10 0" Text="URLs"/>
+        <ItemsControl ItemsSource="{Binding UrlList}" ItemTemplate="{StaticResource StartupItemTemplate}" ItemsPanel="{StaticResource StartupItemPanelTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="#FF272530" BorderThickness="0,0,0,0" Foreground="White" FontFamily="Arial">
+        </ItemsControl>
+    </StackPanel>
 </UserControl>
