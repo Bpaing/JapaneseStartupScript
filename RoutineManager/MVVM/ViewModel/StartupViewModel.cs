@@ -83,27 +83,36 @@ namespace RoutineManager.MVVM.ViewModel
                 this.UrlList.Remove(selectedItem);
         }
 
+        //OpenFileDialog for files, user input for urls.
         [RelayCommand]
-        public void EditAlias(StartupItem selectedItem)
+        public void EditPath(StartupItem selectedItem)
         {
+            if (this.FileList.Contains(selectedItem))
+            {
+                OpenFileDialog dlg = new OpenFileDialog();
+                if (dlg.ShowDialog() == true)
+                {
+                    StartupItem newItem = new StartupItem();
+                    newItem.Path = dlg.FileName;
+                    newItem.Alias = dlg.FileName.Split('\\').Last();
 
-        }
-
-        //https://stackoverflow.com/questions/1619505/wpf-openfiledialog-with-the-mvvm-pattern
-        [RelayCommand]
-        public void ChooseFile(StartupItem selectedItem)
-        {
-            OpenFileDialog dlg = new OpenFileDialog();
-            if (dlg.ShowDialog() == true)
-                selectedItem.Path = dlg.FileName;
+                    var index = this.FileList.IndexOf(selectedItem);
+                    this.FileList[index] = newItem;
+                }
+            }
+            else
+            {
+                
+            }
         }
 
         //Loads data saved by Monitor service into MonitorData.
         //This should be ran everytime the application starts up.
         //Does nothing if data loaded is identical or data does not exist.
+        [RelayCommand]
         public void LoadMonitorData()
         {
-
+            Trace.WriteLine("Loading Monitor Data...");
         }
 
     }
